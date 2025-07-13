@@ -1,0 +1,28 @@
+{
+  "elliptic_curve": {
+    "equation": "y² ≡ x³ + ax + b (mod p)",
+    "sm2_curve": "y² ≡ x³ - 3x + b (mod p)",
+    "parameters": {
+      "p": "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF",
+      "a": "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC",
+      "b": "28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93",
+      "n": "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B61C6AF347D568AEDCE6AF48A03",
+      "Gx": "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7",
+      "Gy": "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0"
+    }
+  },
+  "complexity": {
+    "key_generation": "O(k²) where k is bit length",
+    "signing": "O(k²) for point multiplication",
+    "verification": "O(k²) for two point multiplications"
+  },
+  "security": {
+    "ecdlp": "Elliptic Curve Discrete Logarithm Problem",
+    "security_level": "256-bit equivalent to 3072-bit RSA",
+    "attacks": [
+      "Pollard's rho",
+      "Baby-step giant-step",
+      "Pohlig-Hellman"
+    ]
+  }
+}
