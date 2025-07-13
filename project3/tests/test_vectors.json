@@ -1,0 +1,178 @@
+{
+  "description": "Poseidon2 测试向量集合",
+  "generated_at": "2024-07-13",
+  "test_vectors": [
+    {
+      "name": "基本测试向量 1",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["123", "456"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "基本功能测试"
+    },
+    {
+      "name": "基本测试向量 2", 
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["789", "101112"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "不同输入测试"
+    },
+    {
+      "name": "零输入测试",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["0", "0"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "边界条件测试"
+    },
+    {
+      "name": "大数输入测试",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": [
+          "21888242871839275222246405745257275088548364400416034343698204186575808495616",
+          "21888242871839275222246405745257275088548364400416034343698204186575808495615"
+        ]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "接近字段边界的大数测试"
+    },
+    {
+      "name": "随机测试向量 1",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["1234567890123456789", "9876543210987654321"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "随机大数测试"
+    },
+    {
+      "name": "字符串输入测试",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage_strings": ["hello", "world"],
+        "preimage": ["converted_to_field_elements", "converted_to_field_elements"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "字符串到字段元素转换测试"
+    },
+    {
+      "name": "配置 (256,2,5) 测试 1",
+      "config": "(256,2,5)", 
+      "input": {
+        "preimage": ["123", "456"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "测试不同配置的兼容性"
+    },
+    {
+      "name": "配置 (256,2,5) 测试 2",
+      "config": "(256,2,5)",
+      "input": {
+        "preimage": ["999888777", "111222333"]
+      },
+      "expected_hash": "computed_dynamically", 
+      "notes": "不同配置的随机输入测试"
+    },
+    {
+      "name": "碰撞测试 - 相似输入",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["123456789", "123456790"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "测试相似输入是否产生不同哈希"
+    },
+    {
+      "name": "对称性测试",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["12345", "12345"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "测试相同输入的处理"
+    },
+    {
+      "name": "顺序敏感性测试 A",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["111", "222"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "测试输入顺序的影响 - 版本A"
+    },
+    {
+      "name": "顺序敏感性测试 B",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["222", "111"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "测试输入顺序的影响 - 版本B (应该与A不同)"
+    },
+    {
+      "name": "性能基准测试向量",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["1000000000000000000", "2000000000000000000"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "用于性能基准测试的标准向量"
+    },
+    {
+      "name": "极值测试 - 最小值",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": ["1", "1"]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "最小非零值测试"
+    },
+    {
+      "name": "极值测试 - 接近最大值",
+      "config": "(256,3,5)",
+      "input": {
+        "preimage": [
+          "21888242871839275222246405745257275088548364400416034343698204186575808495610",
+          "21888242871839275222246405745257275088548364400416034343698204186575808495611"
+        ]
+      },
+      "expected_hash": "computed_dynamically",
+      "notes": "接近字段最大值的测试"
+    }
+  ],
+  "validation_rules": {
+    "field_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+    "input_constraints": {
+      "min_value": "0",
+      "max_value": "21888242871839275222246405745257275088548364400416034343698204186575808495616",
+      "array_length": 2
+    },
+    "output_constraints": {
+      "type": "field_element",
+      "deterministic": true,
+      "collision_resistant": true
+    }
+  },
+  "security_properties": {
+    "preimage_resistance": "2^128",
+    "collision_resistance": "2^128", 
+    "second_preimage_resistance": "2^128",
+    "avalanche_effect": "required"
+  },
+  "performance_expectations": {
+    "js_implementation": {
+      "single_hash_time_ms": "< 10",
+      "batch_hash_rate_per_sec": "> 100"
+    },
+    "circuit_implementation": {
+      "constraint_count": "< 1000",
+      "witness_generation_time_ms": "< 100",
+      "proof_generation_time_ms": "< 5000"
+    }
+  }
+}
