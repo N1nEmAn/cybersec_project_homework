@@ -4,74 +4,78 @@
 
 本项目使用 Circom 实现 Poseidon2 哈希算法的零知识证明电路，采用 Groth16 证明系统。项目严格按照要求实现以下三个核心功能：
 
-## 🎯 核心要求实现
+## 🎯 Core Requirements Implementation
 
-### 1. Poseidon2 算法参数配置 ✅
+### 1. Poseidon2 Algorithm Parameter Configuration ✅
 
-根据 [Poseidon2 论文](https://eprint.iacr.org/2023/323.pdf) Table 1 实现两种参数配置：
+Based on [Poseidon2 Paper](https://eprint.iacr.org/2023/323.pdf) Table 1, implementing two parameter configurations:
 
-#### 主要配置: (n,t,d) = (256,2,5)
-- **字段大小 (n)**: 256 位 (BN128 曲线)
-- **状态大小 (t)**: 2 个字段元素
-- **S-box 幂次 (d)**: 5
-- **完整轮数 (R_F)**: 8 轮
-- **部分轮数 (R_P)**: 57 轮
-- **总轮数**: 65 轮
+#### Primary Configuration: (n,t,d) = (256,2,5)
+- **Field Size (n)**: 256 bits (BN128 curve)
+- **State Size (t)**: 2 field elements
+- **S-box Power (d)**: 5
+- **Full Rounds (R_F)**: 8 rounds
+- **Partial Rounds (R_P)**: 57 rounds
+- **Total Rounds**: 65 rounds
 
-#### 备选配置: (n,t,d) = (256,3,5)  
-- **字段大小 (n)**: 256 位 (BN128 曲线)
-- **状态大小 (t)**: 3 个字段元素
-- **S-box 幂次 (d)**: 5
-- **完整轮数 (R_F)**: 8 轮
-- **部分轮数 (R_P)**: 56 轮
-- **总轮数**: 64 轮
+#### Alternative Configuration: (n,t,d) = (256,3,5)  
+- **Field Size (n)**: 256 bits (BN128 curve)
+- **State Size (t)**: 3 field elements
+- **S-box Power (d)**: 5
+- **Full Rounds (R_F)**: 8 rounds
+- **Partial Rounds (R_P)**: 56 rounds
+- **Total Rounds**: 64 rounds
 
-### 2. 零知识证明电路设计 ✅
+### 2. Zero-Knowledge Proof Circuit Design ✅
 
-电路输入/输出规范严格按照要求设计：
+Circuit input/output specification designed strictly according to requirements:
 
 ```circom
 template Poseidon2Hash() {
-    // 私有输入: 哈希原象 (2个字段元素)
+    // Private input: hash preimage (2 field elements)
     signal private input preimage[2];
     
-    // 公开输入: Poseidon2 哈希值 (1个字段元素)
+    // Public input: Poseidon2 hash value (1 field element)
     signal input hash;
     
-    // 约束验证: poseidon2(preimage) == hash
-    // ... 电路实现
+    // Constraint verification: poseidon2(preimage) == hash
+    // ... circuit implementation
 }
 ```
 
-**重要特性**:
-- ✅ **公开输入**: Poseidon2 哈希值 (验证者可见)
-- ✅ **私有输入**: 哈希原象 (证明者私有)
-- ✅ **单块处理**: 算法只处理一个输入块
-- ✅ **零知识**: 验证过程不泄露原象信息
+**Key Features**:
+- ✅ **Public Input**: Poseidon2 hash value (visible to verifier)
+- ✅ **Private Input**: Hash preimage (private to prover)
+- ✅ **Single Block Processing**: Algorithm processes only one input block
+- ✅ **Zero-Knowledge**: Verification process reveals no preimage information
 
-### 3. Groth16 证明系统 ✅
+### 3. Groth16 Proof System ✅
 
-完整实现 Groth16 零知识证明生成和验证：
+Complete Groth16 zero-knowledge proof generation and verification:
 
 ```bash
-# 编译电路
+# Compile circuit
 ./scripts/compile.sh
 
-# 生成证明
+# Generate proof
 ./scripts/prove.sh
 
-# 验证证明  
+# Verify proof  
 ./scripts/verify.sh
 ```
 
-**证明过程**:
-1. **可信设置**: 生成 proving key 和 verification key
-2. **见证计算**: 基于输入计算电路见证
-3. **证明生成**: 使用 Groth16 算法生成简洁证明
-4. **证明验证**: 快速验证证明有效性 (~10ms)
+**Proof Process**:
+1. **Trusted Setup**: Generate proving key and verification key
+2. **Witness Computation**: Calculate circuit witness from inputs
+3. **Proof Generation**: Generate succinct proof using Groth16 algorithm
+4. **Proof Verification**: Fast proof validity verification (~10ms)
+## 🔬 Algorithm Mathematical Principles
+
+### Matrix Optimization Analysis
+
 ```
-标准 3×3 矩阵乘法: 9次乘法
-优化分解方法: 6次乘法 (-33%)
+Standard 3×3 matrix multiplication: 9 multiplications
+Optimized decomposition method: 6 multiplications (-33%)
 
 sum = x₀ + x₁ + x₂
 out₀ = sum + x₀    # 2x₀ + x₁ + x₂
@@ -79,137 +83,167 @@ out₁ = sum + x₁    # x₀ + 2x₁ + x₂
 out₂ = sum + 2×x₂  # x₀ + x₁ + 3x₂
 ```
 
-#### 3. 部分轮设计
-![约束对比](docs/images/constraint_comparison.png)
+### Partial Rounds Design
 
-传统 Poseidon vs Poseidon2:
-- **传统**: 64轮完整轮 × 3个S-box = 192个S-box
-- **Poseidon2**: 8轮完整轮 × 3个S-box + 56轮部分轮 × 1个S-box = 80个S-box
-- **S-box减少**: 58%
+![Constraint Comparison](docs/constraint_comparison.png)
 
-## 🔬 技术实现详解
+Constraint comparison between traditional Poseidon vs Poseidon2:
+- **Traditional**: 64 full rounds × 3 S-boxes = 192 S-boxes
+- **Poseidon2**: 8 full rounds × 3 S-boxes + 56 partial rounds × 1 S-box = 80 S-boxes
+- **S-box Reduction**: 58%
 
-### Poseidon2 算法核心
+```
+Full Round Structure:    [S-box] → [S-box] → [S-box] → [Linear Layer]
+Partial Round Structure: [S-box] → [    ] → [    ] → [Linear Layer]
+```
 
-Poseidon2 的置换函数定义为：
+## 🔬 Technical Implementation Details
+
+### Poseidon2 Algorithm Core
+
+Poseidon2 permutation function is defined as:
 ```
 π: F^t → F^t
 ```
 
-其中 F 是 BN128 椭圆曲线的标量域，大小为：
+Where F is the scalar field of BN128 elliptic curve, with size:
 ```
 p = 21888242871839275222246405745257275088548364400416034343698204186575808495617
 ```
 
-### 轮函数结构
+### Round Function Structure
 
-每轮包含三个步骤：
-1. **加轮常数**: `state[i] ← state[i] + C[round][i]`
-2. **S-box 层**: `state[i] ← state[i]^5`
-3. **线性层**: `state ← MDS_matrix × state`
+Each round consists of three steps:
+1. **Add Round Constants**: `state[i] ← state[i] + C[round][i]`
+2. **S-box Layer**: `state[i] ← state[i]^5`
+3. **Linear Layer**: `state ← MDS_matrix × state`
 
-### 完整轮 vs 部分轮
+### Full Rounds vs Partial Rounds
 
-- **完整轮**: S-box 应用于所有状态元素
-- **部分轮**: S-box 仅应用于 state[0]，大幅减少约束
+- **Full Rounds**: S-box applied to all state elements
+- **Partial Rounds**: S-box applied only to state[0], dramatically reducing constraints
 
-### 安全性保证
+### Security Guarantees
 
-基于差分攻击和线性攻击分析：
-- **目标安全级别**: 128 位
-- **实际安全边际**: 135+ 位 (额外 7 位保护)
-- **约束数量**: ~736 个 (相比 SHA-256 减少 97%)
+Based on differential and linear attack analysis:
+- **Target Security Level**: 128 bits
+- **Actual Security Margin**: 135+ bits (extra 7 bits protection)
+- **Constraint Count**: ~736 (97% reduction compared to SHA-256)
 
-## 电路设计
+## Circuit Design
 
-### 输入输出规范
-- **公开输入**: Poseidon2 哈希值 (1 个字段元素)
-- **私有输入**: 哈希原象 (根据配置为 2 或 3 个字段元素)
-- **约束**: 验证 `poseidon2(preimage) == hash`
+### Input/Output Specification
+- **Public Input**: Poseidon2 hash value (1 field element)
+- **Private Input**: Hash preimage (2 or 3 field elements depending on configuration)
+- **Constraint**: Verify `poseidon2(preimage) == hash`
 
-### 核心组件
-1. **置换函数**: 实现 Poseidon2 的核心置换
-2. **S-box**: 五次幂运算 x^5
-3. **线性层**: MDS 矩阵乘法
-4. **轮常数**: 预计算的轮常数
-5. **哈希包装器**: 完整的哈希功能
+### Core Components
+1. **Permutation Function**: Implements Poseidon2 core permutation
+2. **S-box**: Fifth power operation x^5
+3. **Linear Layer**: MDS matrix multiplication
+4. **Round Constants**: Pre-computed round constants
+5. **Hash Wrapper**: Complete hash functionality
 
-## 📊 性能分析与对比
+## 📊 Performance Analysis & Comparison
 
-### 多维性能评估
-![性能对比](docs/images/performance_comparison.png)
+### Multi-dimensional Performance Evaluation
 
-### 约束效率分析
-各哈希算法在零知识证明中的约束数量对比：
+![Performance Comparison](docs/performance_comparison.png)
 
-| 算法 | 约束数 | 相对性能 | ZK友好度 | 证明时间 |
-|------|--------|----------|----------|----------|
-| SHA-256 | 27,000 | 1.0× | ⭐ | 45s |
-| Keccak-256 | 15,000 | 1.8× | ⭐⭐ | 25s |
-| MiMC | 2,000 | 13.5× | ⭐⭐⭐ | 3.2s |
-| Poseidon | 1,200 | 22.5× | ⭐⭐⭐⭐ | 2.1s |
-| **Poseidon2** | **736** | **36.7×** | **⭐⭐⭐⭐⭐** | **1.5s** |
+Constraint efficiency analysis for hash algorithms in zero-knowledge proofs:
 
-### 扩展性能分析
-![扩展性分析](docs/images/scalability_analysis.png)
+```
++-------------+------------+------------+-------------+-------------+
+| Algorithm   | Constraints| Relative   | ZK-Friendly | Proof Time  |
+|             |            | Performance|             |             |
++-------------+------------+------------+-------------+-------------+
+| SHA-256     | 27,000     | 1.0×       | ⭐          | 45s         |
+| Keccak-256  | 15,000     | 1.8×       | ⭐⭐        | 25s         |
+| MiMC        | 2,000      | 13.5×      | ⭐⭐⭐      | 3.2s        |
+| Poseidon    | 1,200      | 22.5×      | ⭐⭐⭐⭐    | 2.1s        |
+| Poseidon2   | 736        | 36.7×      | ⭐⭐⭐⭐⭐  | 1.5s        |
++-------------+------------+------------+-------------+-------------+
+```
 
-- **批处理性能**: 单个哈希 312 ops/s → 批量处理 1000+ ops/s
-- **并行加速比**: 8线程达到 5.82× 加速比 (73% 效率)
-- **内存效率**: 合理的内存增长曲线，支持大规模应用
+### Scalability Performance Analysis
 
-### 应用场景适用性
-![应用场景](docs/images/application_scenarios.png)
+![Scalability Analysis](docs/scalability_analysis.png)
 
-Poseidon2 在各种 ZK 应用场景中的适用性评分：
-- **区块链**: 95% (Merkle 树, 状态证明)
-- **隐私计算**: 98% (私人投票, 机密交易)
-- **身份验证**: 92% (零知识身份证明)
-- **投票系统**: 96% (匿名投票验证)
-- **数据完整性**: 88% (数据溯源证明)
+- **Batch Processing Performance**: Single hash 312 ops/s → Batch processing 1000+ ops/s
+- **Parallel Speedup**: 8 threads achieve 5.82× speedup (73% efficiency)
+- **Memory Efficiency**: Reasonable memory growth curve, supports large-scale applications
 
-## 🔧 技术实现详解
+### Application Scenario Suitability
 
-### 内存使用分析
-![内存分析](docs/images/memory_analysis.png)
+![Application Scenarios](docs/application_scenarios.png)
 
-Poseidon2 的内存使用特点：
-- **总内存占用**: 39.8MB (堆内存 15MB + 外部内存 2.8MB + RSS 22MB)
-- **内存效率**: 随着操作数量增加，平均每操作内存占用下降 (批处理优势)
-- **内存/性能比**: 相比传统哈希函数，虽然绝对内存更高，但考虑到ZK性能提升，整体效率优秀
+Poseidon2 suitability scores in various ZK application scenarios:
+```
+Blockchain Applications:     ████████████████████ 95% (Merkle trees, state proofs)
+Privacy Computing:          ████████████████████ 98% (Private voting, confidential transactions)  
+Identity Authentication:     ████████████████████ 92% (Zero-knowledge identity proofs)
+Voting Systems:             ████████████████████ 96% (Anonymous vote verification)
+Data Integrity:             ████████████████████ 88% (Data provenance proofs)
+```
 
-### 安全性分析
-![安全性分析](docs/images/security_analysis.png)
+## 🔧 Technical Implementation Details
 
-Poseidon2 提供全面的加密安全保障：
-- **抗碰撞攻击**: 128位安全级别
-- **抗原像攻击**: 128位安全级别  
-- **抗二次原像攻击**: 128位安全级别
-- **抗差分攻击**: 135位安全边际 (+7位额外保护)
-- **抗线性攻击**: 142位安全边际 (+14位额外保护)
-- **抗代数攻击**: 130位安全边际 (+2位额外保护)
+### Memory Usage Analysis
 
-**安全性总结**: Poseidon2 不仅达到了128位安全要求，在多个攻击向量上都提供了额外的安全边际。
+![Memory Analysis](docs/memory_analysis.png)
 
-### 核心电路组件
+Poseidon2 memory usage characteristics:
+```
+Memory Component      Size (MB)    Percentage
+─────────────────────────────────────────────
+Heap Memory           15.0         37.7%
+External Memory       2.8          7.0%
+RSS Memory            22.0         55.3%
+─────────────────────────────────────────────
+Total Memory          39.8         100.0%
+```
 
-#### 要求实现总结 ✅
+- **Memory Efficiency**: Average memory usage per operation decreases as number of operations increases (batch processing advantage)
+- **Memory/Performance Ratio**: Although absolute memory is higher compared to traditional hash functions, overall efficiency is excellent considering ZK performance improvement
 
-本项目完整实现了三个核心要求：
+### Security Analysis
 
-1. **✅ 参数配置**: 实现 (256,2,5) 主配置，同时支持 (256,3,5) 扩展
-   - 字段大小: 256位 BN128 椭圆曲线标量域  
-   - 输入数量: 2个元素 (可扩展至3个)
-   - 轮数配置: 5轮安全设计
+![Security Analysis](docs/security_analysis.png)
 
-2. **✅ 电路设计**: 零知识电路实现单块哈希验证
-   - 私有输入: `preimage[2]` (证明者的哈希原象)
-   - 公开输入: `hash` (验证者的目标哈希值)
-   - 核心约束: `poseidon2(preimage) === hash`
+Poseidon2 provides comprehensive cryptographic security guarantees:
+```
+Attack Vector              Security Level    Margin
+───────────────────────────────────────────────────
+Collision Resistance       128 bits          ✓
+Preimage Resistance         128 bits          ✓  
+Second Preimage Resistance  128 bits          ✓
+Differential Attacks        135 bits          +7 bits
+Linear Attacks              142 bits          +14 bits
+Algebraic Attacks           130 bits          +2 bits
+```
 
-3. **✅ Groth16证明**: 完整的零知识证明生成和验证流程
-   - 可信设置: Powers of Tau + Circuit-specific setup
-   - 证明生成: 基于见证的 Groth16 证明
-   - 快速验证: 毫秒级验证时间
+**Security Summary**: Poseidon2 not only meets the 128-bit security requirement, but provides additional security margins against multiple attack vectors.
+
+### Core Circuit Components
+
+#### Requirements Implementation Summary ✅
+
+This project completely implements the three core requirements:
+
+1. **✅ Parameter Configuration**: Implement (256,2,5) primary configuration, with support for (256,3,5) extension
+   - Field Size: 256-bit BN128 elliptic curve scalar field  
+   - Input Count: 2 elements (extensible to 3)
+   - Round Configuration: 5-power secure design
+
+2. **✅ Circuit Design**: Zero-knowledge circuit implementing single-block hash verification
+   - Private Input: `preimage[2]` (prover's hash preimage)
+   - Public Input: `hash` (verifier's target hash value)
+   - Core Constraint: `poseidon2(preimage) === hash`
+
+3. **✅ Groth16 Proof**: Complete zero-knowledge proof generation and verification workflow
+   - Trusted Setup: Powers of Tau + Circuit-specific setup
+   - Proof Generation: Groth16 proof based on witness
+   - Fast Verification: Millisecond-level verification time
 
 ## 项目结构
 
@@ -309,6 +343,9 @@ open docs/performance_report.md
 ## 🏗️ 项目架构
 
 ### 核心组件关系图
+
+![Algorithm Flow](docs/algorithm_flow.png)
+
 ```
 输入 (2/3个字段元素)
     ↓
