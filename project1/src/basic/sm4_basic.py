@@ -338,20 +338,66 @@ class SM4Basic:
         
         return self._encrypt_block(plaintext)
     
-    def decrypt_block(self, ciphertext: bytes) -> bytes:
+    def decrypt_block(self, ciphertext):
         """
-        解密单个16字节块（公共接口）
+        解密单个128位数据块（推荐使用的公开接口）
         
         Args:
-            ciphertext: 16字节密文块
+            ciphertext: 16字节的密文数据，支持bytes或bytearray类型
             
         Returns:
-            16字节明文块
+            bytes: 16字节的明文数据
+            
+        Raises:
+            ValueError: 当输入数据长度不为16字节时抛出异常
+            
+        技术说明：
+        - 采用与加密过程相同的轮函数，但轮密钥顺序相反
+        - SM4算法的对称性保证了解密过程与加密过程结构相同
+        - 内部调用_decrypt_core方法执行具体的解密运算
         """
         if len(ciphertext) != 16:
             raise ValueError("密文块必须为16字节")
         
         return self._decrypt_block(ciphertext)
+    
+    def _generate_round_keys(self):
+        """
+        从主密钥生成32个轮密钥（内部核心方法）
+        
+        算法过程：
+        1. 将128位主密钥拆分为4个32位字（MK0-MK3）
+        2. 使用系统参数FK与主密钥异或：K0-K3 = MK0-MK3 ⊕ FK0-FK3
+        3. 采用与数据加密相似的轮函数，但使用固定参数CK作为轮常数
+        4. 每轮计算：rk[i] = K[i] ⊕ T'(K[i+1] ⊕ K[i+2] ⊕ K[i+3] ⊕ CK[i])
+        5. 其中T'是密钥扩展中的非线性变换，只进行S盒替换和线性变换L'
+        
+        技术细节：
+        - FK参数用于初始化密钥状态，增强密钥的雪崩效应
+        - CK参数为轮常数，每轮不同，防止相关密钥攻击
+        - L'变换比数据加密中的L变换更简单，仅包含循环移位
+        """
+        # 将密钥转换为4个32位字
+        mk = bytes_to_int_list(self.key)
+        
+        # 初始化：K0 = MK0 ⊕ FK0, K1 = MK1 ⊕ FK1, ...
+        k = [mk[i] ^ FK[i] for i in range(4)]
+        
+        # 生成32个轮密钥
+        round_keys = []
+        for i in range(ROUNDS):
+            # rki = Ki+4 = Ki ⊕ T'(Ki+1 ⊕ Ki+2 ⊕ Ki+3 ⊕ CKi)
+            temp = k[1] ^ k[2] ^ k[3] ^ CK[i]
+            temp = self._tau_transform(temp)
+            temp = self._linear_transform_l_prime(temp)
+            
+            rk = k[0] ^ temp
+            round_keys.append(rk)
+            
+            # 更新K值：左移一位
+            k = k[1:] + [rk]
+        
+        return round_keys
 
 # 测试函数
 def test_basic_sm4():
