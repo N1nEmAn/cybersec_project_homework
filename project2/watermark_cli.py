@@ -80,11 +80,11 @@ def setup_arguments():
     
     # 攻击测试命令
     attack_parser = subparsers.add_parser('attack', help='攻击测试')
-    attack_parser.add_argument('-i', '--input', required=True,
+    attack_parser.add_argument('-i', '--input', 
                               help='输入图像路径')
-    attack_parser.add_argument('-o', '--output', required=True,
+    attack_parser.add_argument('-o', '--output',
                               help='攻击后图像保存路径')
-    attack_parser.add_argument('-t', '--type', required=True,
+    attack_parser.add_argument('-t', '--type',
                               help='攻击类型')
     attack_parser.add_argument('--list-attacks', action='store_true',
                               help='列出所有可用的攻击类型')
@@ -170,11 +170,17 @@ def embed_watermark(args):
         
         # 嵌入水印
         logger.info(f"使用 {args.algorithm} 算法嵌入水印")
-        watermarked_image = algorithm.embed(
-            host_image, watermark, 
-            strength=args.strength,
-            key=args.key
-        )
+        if args.algorithm == 'lsb':
+            watermarked_image = algorithm.embed(
+                host_image, watermark, 
+                strength=args.strength
+            )
+        else:  # DCT or other algorithms that support key
+            watermarked_image = algorithm.embed(
+                host_image, watermark, 
+                strength=args.strength,
+                key=args.key
+            )
         
         # 保存结果
         logger.info(f"保存含水印图像: {args.output}")
@@ -213,8 +219,14 @@ def extract_watermark(args):
                 watermark_size=tuple(args.size),
                 key=args.key
             )
+        elif args.algorithm == 'lsb':
+            # LSB盲提取（不需要key参数）
+            extracted_watermark = algorithm.extract(
+                watermarked_image,
+                watermark_size=tuple(args.size)
+            )
         else:
-            # 盲提取
+            # 其他算法的盲提取
             extracted_watermark = algorithm.extract(
                 watermarked_image,
                 watermark_size=tuple(args.size),
@@ -246,7 +258,24 @@ def attack_image(args):
         print("可用的攻击类型:")
         for attack_name in sorted(configs.keys()):
             print(f"  {attack_name}")
+        print("\n直接攻击方法:")
+        print("  gaussian_noise - 高斯噪声")
+        print("  salt_pepper_noise - 椒盐噪声")
+        print("  gaussian_blur - 高斯模糊")
+        print("  median_blur - 中值滤波")
+        print("  jpeg_compression - JPEG压缩")
+        print("  rotate - 旋转")
+        print("  scale - 缩放")
+        print("  translate - 平移")
+        print("  crop - 裁剪")
+        print("  flip_horizontal - 水平翻转")
+        print("  flip_vertical - 垂直翻转")
         return True
+    
+    # 检查必要参数
+    if not all([args.input, args.output, args.type]):
+        print("错误: 需要指定输入文件(-i)、输出文件(-o)和攻击类型(-t)")
+        return False
     
     try:
         # 加载图像

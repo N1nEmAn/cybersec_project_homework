@@ -169,7 +169,7 @@ class ImageLoader:
         
         Args:
             size: 水印尺寸 (width, height)
-            pattern: 水印模式 ('text', 'logo', 'binary')
+            pattern: 水印模式 ('text', 'logo', 'binary', 'random_binary')
             
         Returns:
             测试水印数组
@@ -197,6 +197,11 @@ class ImageLoader:
                         
         elif pattern == 'binary':
             # 二值随机模式
+            watermark = np.random.randint(0, 2, (height, width), dtype=np.uint8) * 255
+            
+        elif pattern == 'random_binary':
+            # 高度随机的二值模式
+            np.random.seed(42)  # 固定种子确保可重现
             watermark = np.random.randint(0, 2, (height, width), dtype=np.uint8) * 255
             
         else:
