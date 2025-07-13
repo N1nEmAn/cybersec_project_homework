@@ -139,14 +139,16 @@ project5/
 │   ├── algorithm_analysis.md          # 算法分析
 │   └── performance_summary.md         # 性能摘要
 └── charts/                            # 性能图表
-    ├── operations_comparison.png       # 操作对比
-    ├── speedup_analysis.png           # 加速分析
-    ├── throughput_heatmap.png         # 吞吐量热图
+    ├── algorithm_analysis.png         # 算法流程与数学分析
     ├── batch_performance.png          # 批量性能
+    ├── complexity_analysis.png        # 计算复杂度分析
     ├── efficiency_radar.png           # 效率雷达图
+    ├── operation_breakdown.png        # 操作分解
+    ├── operations_comparison.png       # 操作对比
     ├── optimization_impact.png        # 优化影响
-    ├── complexity_analysis.png        # 复杂度分析
-    └── operation_breakdown.png        # 操作分解
+    ├── security_analysis.png          # 安全性分析对比
+    ├── speedup_analysis.png           # 加速分析
+    └── throughput_heatmap.png         # 吞吐量热图
 ```
 
 ## 技术特点
@@ -315,16 +317,18 @@ python demo_complete_real.py
 
 ## 性能图表说明
 
-项目生成8种专业性能分析图表：
+项目生成10种专业性能分析图表：
 
-1. **operations_comparison.png** - 三种实现的操作时间对比
-2. **speedup_analysis.png** - 加速比和吞吐量分析
-3. **throughput_heatmap.png** - 操作吞吐量热图
-4. **batch_performance.png** - 批量处理性能分析
-5. **efficiency_radar.png** - 多维度效率雷达图
-6. **optimization_impact.png** - 优化技术影响分析
-7. **complexity_analysis.png** - 理论复杂度对比
-8. **operation_breakdown.png** - 操作时间分布分析
+1. **algorithm_analysis.png** - 算法流程与数学分析图表
+2. **batch_performance.png** - 批量处理性能分析
+3. **complexity_analysis.png** - 计算复杂度分析图表
+4. **efficiency_radar.png** - 多维度效率雷达图
+5. **operation_breakdown.png** - 操作时间分布分析
+6. **operations_comparison.png** - 三种实现的操作时间对比
+7. **optimization_impact.png** - 优化技术影响分析
+8. **security_analysis.png** - 安全性分析对比图表
+9. **speedup_analysis.png** - 加速比和吞吐量分析
+10. **throughput_heatmap.png** - 操作吞吐量热图
 
 ## 技术文档
 
