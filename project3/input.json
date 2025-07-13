@@ -1,0 +1,4 @@
+{
+  "preimage": ["123", "456"],
+  "expectedHash": "0"
+}

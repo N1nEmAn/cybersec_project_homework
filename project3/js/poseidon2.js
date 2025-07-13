@@ -18,8 +18,8 @@ class Poseidon2 {
     async hash(inputs) {
         await this.init();
         
-        if (inputs.length !== 2) {
-            throw new Error("Poseidon2 currently supports 2 inputs only");
+        if (inputs.length !== 2 && inputs.length !== 3) {
+            throw new Error("Poseidon2 supports 2 inputs (256,2,5) or 3 inputs (256,3,5)");
         }
 
         // 验证输入是否在有效范围内
