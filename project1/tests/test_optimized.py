@@ -135,6 +135,7 @@ class TestLargeDataProcessing:
         self.sm4_basic = SM4Basic(self.key)
         self.sm4_lookup = SM4LookupTable(self.key)
         self.sm4_bitwise = SM4Bitwise(self.key)
+        self.sm4_parallel = SM4Parallel(self.key)
     
     def test_large_data_consistency(self):
         """测试大量数据的一致性"""
