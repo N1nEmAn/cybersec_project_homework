@@ -406,9 +406,10 @@ def main():
     # 测试命令
     test_parser = subparsers.add_parser('test', help='正确性测试')
     
-    # 错误报告命令
-    report_parser = subparsers.add_parser('report', help='生成错误报告')
-    report_parser.add_argument('-d', '--description', help='错误描述')
+    # 添加错误报告子命令
+    parser_report = subparsers.add_parser('report', help='生成错误报告')
+    parser_report.add_argument('-d', '--description', default='', help='错误描述')
+    parser_report.set_defaults(func=report_bug)
     
     args = parser.parse_args()
     
