@@ -84,21 +84,29 @@ def performance_comparison():
 
 def plot_performance(data_sizes, results, implementations):
     """绘制性能对比图表"""
-    plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
     plt.figure(figsize=(12, 8))
     
     # 主图 - 吞吐量对比
     plt.subplot(2, 2, 1)
     x_labels = [f"{size//1024}KB" for size in data_sizes]
     
+    # 使用英文标签
+    impl_name_map = {
+        "基础实现": "Basic",
+        "查找表优化": "LookupTable", 
+        "并行优化": "Parallel",
+        "位运算优化": "Bitwise"
+    }
+    
     for impl_name, _, color in implementations:
         if impl_name in results:
+            english_name = impl_name_map.get(impl_name, impl_name)
             plt.plot(x_labels, results[impl_name], 
-                    marker='o', label=impl_name, color=color, linewidth=2)
+                    marker='o', label=english_name, color=color, linewidth=2)
     
-    plt.title('SM4算法吞吐量对比', fontsize=14, fontweight='bold')
-    plt.xlabel('数据大小')
-    plt.ylabel('吞吐量 (MB/s)')
+    plt.title('SM4 Algorithm Throughput Comparison', fontsize=14, fontweight='bold')
+    plt.xlabel('Data Size')
+    plt.ylabel('Throughput (MB/s)')
     plt.legend()
     plt.grid(True, alpha=0.3)
     
@@ -108,15 +116,16 @@ def plot_performance(data_sizes, results, implementations):
     
     for impl_name, _, color in implementations:
         if impl_name != "基础实现" and impl_name in results:
+            english_name = impl_name_map.get(impl_name, impl_name)
             speedups = [results[impl_name][i] / base_results[i] 
                        for i in range(len(data_sizes))]
             plt.bar([i + implementations.index((impl_name, _, color)) * 0.2 
                     for i in range(len(x_labels))], 
-                   speedups, width=0.2, label=impl_name, color=color, alpha=0.7)
+                   speedups, width=0.2, label=english_name, color=color, alpha=0.7)
     
-    plt.title('加速比对比 (相对基础实现)', fontsize=14, fontweight='bold')
-    plt.xlabel('数据大小')
-    plt.ylabel('加速比')
+    plt.title('Speedup Comparison (vs Basic)', fontsize=14, fontweight='bold')
+    plt.xlabel('Data Size')
+    plt.ylabel('Speedup Ratio')
     plt.xticks(range(len(x_labels)), x_labels)
     plt.legend()
     plt.grid(True, alpha=0.3)
@@ -127,23 +136,23 @@ def plot_performance(data_sizes, results, implementations):
                    key=lambda x: np.mean(results[x]) if x != "基础实现" else 0)
     
     plt.plot(data_sizes, results["基础实现"], 
-            'b-o', label="基础实现", linewidth=2)
+            'b-o', label="Basic", linewidth=2)
     plt.plot(data_sizes, results[best_impl], 
-            'g-o', label=f"{best_impl} (最优)", linewidth=2)
+            'g-o', label=f"{impl_name_map.get(best_impl, best_impl)} (Best)", linewidth=2)
     
-    plt.title('最优实现 vs 基础实现', fontsize=14, fontweight='bold')
-    plt.xlabel('数据大小 (字节)')
-    plt.ylabel('吞吐量 (MB/s)')
+    plt.title('Best Implementation vs Basic', fontsize=14, fontweight='bold')
+    plt.xlabel('Data Size (Bytes)')
+    plt.ylabel('Throughput (MB/s)')
     plt.xscale('log')
     plt.legend()
     plt.grid(True, alpha=0.3)
     
     # 优化效果总结
     plt.subplot(2, 2, 4)
-    impl_names = [name for name, _, _ in implementations if name != "基础实现"]
+    impl_names_en = [impl_name_map.get(name, name) for name, _, _ in implementations if name != "基础实现"]
     avg_speedups = []
     
-    for impl_name in impl_names:
+    for impl_name in [name for name, _, _ in implementations if name != "基础实现"]:
         if impl_name in results:
             speedups = [results[impl_name][i] / base_results[i] 
                        for i in range(len(data_sizes))]
@@ -152,15 +161,15 @@ def plot_performance(data_sizes, results, implementations):
             avg_speedups.append(0)
     
     colors = [color for name, _, color in implementations if name != "基础实现"]
-    bars = plt.bar(impl_names, avg_speedups, color=colors, alpha=0.7)
+    bars = plt.bar(impl_names_en, avg_speedups, color=colors, alpha=0.7)
     
     # 添加数值标签
     for bar, speedup in zip(bars, avg_speedups):
         plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
                 f'{speedup:.2f}x', ha='center', va='bottom', fontweight='bold')
     
-    plt.title('平均加速比总结', fontsize=14, fontweight='bold')
-    plt.ylabel('平均加速比')
+    plt.title('Average Speedup Summary', fontsize=14, fontweight='bold')
+    plt.ylabel('Average Speedup Ratio')
     plt.xticks(rotation=45)
     plt.grid(True, alpha=0.3)
     
@@ -171,8 +180,8 @@ def plot_performance(data_sizes, results, implementations):
     plt.savefig(output_file, dpi=300, bbox_inches='tight')
     print(f"\n📈 性能图表已保存到: {output_file}")
     
-    # 显示图表
-    plt.show()
+    # 不显示图表，避免阻塞
+    # plt.show()
 
 
 def algorithm_complexity_analysis():
