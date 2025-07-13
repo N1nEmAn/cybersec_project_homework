@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.0+-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status](https://img.shields.io/badge/Status-Completed-green.svg)
 
 ## 📖 项目概述
 
@@ -60,8 +60,8 @@ matplotlib >= 3.3
 
 ```bash
 # 克隆项目
-git clone <repository-url>
-cd project2
+git clone https://github.com/N1nEmAn/cybersec_project_homework.git
+cd cybersec_project_homework/project2
 
 # 创建虚拟环境（推荐）
 python -m venv venv
@@ -360,37 +360,27 @@ python src/gui/watermark_gui.py
 - **隐秘通信**: 信息隐藏传输
 - **篡改检测**: 恶意修改识别
 
-## 🤝 贡献指南
+## � 开发说明
 
-欢迎提交Issue和Pull Request来改进项目：
+本项目作为网络安全课程作业开发，实现了完整的数字水印系统。
 
-1. Fork本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建Pull Request
+## 📞 作业信息
 
-## 📄 许可证
+- 课程: 网络安全
+- 实现: 数字水印嵌入与提取系统
+- 算法: LSB空域算法 + DCT频域算法
 
-本项目采用MIT许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+## 🙏 技术依赖
 
-## 📞 联系方式
-
-- 项目维护者: cybersec_project
-- 邮箱: contact@example.com
-- 项目链接: [GitHub Repository](https://github.com/username/project2)
-
-## 🙏 致谢
-
-感谢以下开源项目的支持：
-- OpenCV - 计算机视觉库
-- NumPy - 数值计算库
-- PIL/Pillow - 图像处理库
-- Matplotlib - 数据可视化库
+本项目使用了以下开源库：
+- OpenCV - 计算机视觉处理
+- NumPy - 数值计算
+- PIL/Pillow - 图像处理
+- Matplotlib - 结果可视化
 
 ---
 
-**⭐ 如果这个项目对您有帮助，请给我们一个星标！**
+**📚 数字水印系统课程作业实现**
 
 ## 📋 文档导航
 
@@ -475,10 +465,37 @@ project2/
 └── requirements.txt       # 依赖包
 ```
 
-## 贡献指南
+## 课程实现说明
 
-欢迎提交Issue和Pull Request来完善项目！
+本系统完全按照课程要求实现，包含以下核心功能：
 
-## 许可证
+- **水印嵌入与提取**: 实现了LSB和DCT两种主流算法
+- **鲁棒性测试**: 包括旋转、缩放、压缩、噪声等28种攻击
+- **完整评估体系**: PSNR、SSIM等图像质量评价指标
+- **可视化展示**: 直观展现嵌入效果和攻击测试结果
 
-MIT License
+## 开发环境配置
+
+推荐使用以下环境进行测试和运行：
+
+```
+project2/
+├── src/                    # 核心算法实现
+│   ├── algorithms/         # LSB和DCT水印算法
+│   ├── attacks/           # 各种攻击测试
+│   ├── evaluation/        # 质量评估模块
+│   └── gui/              # 图形界面(可选)
+├── tests/                 # 单元测试
+├── docs/                  # 技术文档和数学推导
+├── demo/                  # 演示结果展示
+└── requirements.txt       # Python依赖包清单
+```
+
+## 技术实现亮点
+
+通过本次作业实现，掌握了以下关键技术：
+
+1. **空域水印算法**: LSB最低有效位嵌入技术
+2. **频域水印算法**: DCT离散余弦变换技术
+3. **鲁棒性分析**: 各种攻击下的水印生存能力
+4. **质量评估**: 图像失真度量和水印检测准确性
