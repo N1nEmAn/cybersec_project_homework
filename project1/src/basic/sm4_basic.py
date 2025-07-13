@@ -320,13 +320,18 @@ class SM4Basic:
     
     def encrypt_block(self, plaintext: bytes) -> bytes:
         """
-        加密单个16字节块（公共接口）
+        加密单个16字节块
+        这是公共接口，外部调用这个方法
         
         Args:
             plaintext: 16字节明文块
             
         Returns:
             16字节密文块
+            
+        Note:
+            这个方法主要是为了提供统一的接口，
+            内部实际调用_encrypt_block方法
         """
         if len(plaintext) != 16:
             raise ValueError("明文块必须为16字节")
