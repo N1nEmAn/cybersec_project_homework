@@ -1,0 +1,12 @@
+# requirements_arch.txt - Arch Linux用户专用依赖文件
+
+# 使用pacman安装的包 (官方仓库)
+# sudo pacman -S python-numpy python-pytest python-matplotlib python-pandas
+
+# 使用pip安装的包 (需要--break-system-packages参数)
+tabulate>=0.8.9
+
+# 可选的开发工具
+# black>=21.0.0          # 代码格式化
+# flake8>=3.9.0          # 代码检查
+# mypy>=0.910            # 类型检查
