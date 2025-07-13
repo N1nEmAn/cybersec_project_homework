@@ -221,6 +221,94 @@ class SM4Basic:
         
         return bytes(plaintext)
     
+    def _pkcs7_pad(self, data: bytes) -> bytes:
+        """
+        PKCS7填充
+        
+        Args:
+            data: 待填充的数据
+            
+        Returns:
+            填充后的数据
+        """
+        pad_len = 16 - (len(data) % 16)
+        return data + bytes([pad_len] * pad_len)
+    
+    def _pkcs7_unpad(self, data: bytes) -> bytes:
+        """
+        PKCS7去填充
+        
+        Args:
+            data: 填充后的数据
+            
+        Returns:
+            去填充后的数据
+        """
+        if not data:
+            raise ValueError("数据为空")
+        
+        pad_len = data[-1]
+        if pad_len < 1 or pad_len > 16:
+            raise ValueError("无效的填充")
+        
+        if len(data) < pad_len:
+            raise ValueError("数据长度不足")
+        
+        # 验证填充的正确性
+        for i in range(pad_len):
+            if data[-(i+1)] != pad_len:
+                raise ValueError("填充格式错误")
+        
+        return data[:-pad_len]
+    
+    def encrypt_ecb(self, plaintext: bytes, padding: bool = True) -> bytes:
+        """
+        ECB模式加密
+        
+        Args:
+            plaintext: 明文
+            padding: 是否使用PKCS7填充
+            
+        Returns:
+            密文
+        """
+        if padding:
+            plaintext = self._pkcs7_pad(plaintext)
+        
+        if len(plaintext) % 16 != 0:
+            raise ValueError("明文长度必须是16的倍数")
+        
+        ciphertext = b''
+        for i in range(0, len(plaintext), 16):
+            block = plaintext[i:i+16]
+            ciphertext += self.encrypt_block(block)
+        
+        return ciphertext
+    
+    def decrypt_ecb(self, ciphertext: bytes, padding: bool = True) -> bytes:
+        """
+        ECB模式解密
+        
+        Args:
+            ciphertext: 密文
+            padding: 是否使用PKCS7填充
+            
+        Returns:
+            明文
+        """
+        if len(ciphertext) % 16 != 0:
+            raise ValueError("密文长度必须是16的倍数")
+        
+        plaintext = b''
+        for i in range(0, len(ciphertext), 16):
+            block = ciphertext[i:i+16]
+            plaintext += self.decrypt_block(block)
+        
+        if padding:
+            plaintext = self._pkcs7_unpad(plaintext)
+        
+        return plaintext
+
     def get_round_keys_info(self):
         """
         获取轮密钥信息，用于调试和分析
@@ -229,6 +317,36 @@ class SM4Basic:
             list: 格式化的轮密钥信息
         """
         return [f"RK{i:2d}: {format_hex(rk)}" for i, rk in enumerate(self.round_keys)]
+    
+    def encrypt_block(self, plaintext: bytes) -> bytes:
+        """
+        加密单个16字节块（公共接口）
+        
+        Args:
+            plaintext: 16字节明文块
+            
+        Returns:
+            16字节密文块
+        """
+        if len(plaintext) != 16:
+            raise ValueError("明文块必须为16字节")
+        
+        return self._encrypt_block(plaintext)
+    
+    def decrypt_block(self, ciphertext: bytes) -> bytes:
+        """
+        解密单个16字节块（公共接口）
+        
+        Args:
+            ciphertext: 16字节密文块
+            
+        Returns:
+            16字节明文块
+        """
+        if len(ciphertext) != 16:
+            raise ValueError("密文块必须为16字节")
+        
+        return self._decrypt_block(ciphertext)
 
 # 测试函数
 def test_basic_sm4():
