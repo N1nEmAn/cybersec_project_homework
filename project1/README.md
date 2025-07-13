@@ -61,6 +61,37 @@ python -m pytest tests/
 python benchmarks/benchmark.py
 ```
 
+## 快速上手
+
+### 最简单的使用方式
+
+```python
+from src.basic.sm4_basic import SM4Basic
+
+# 创建密钥和SM4实例
+key = bytes.fromhex('0123456789ABCDEFFEDCBA9876543210')
+sm4 = SM4Basic(key)
+
+# 加密文本
+plaintext = b"你好，SM4！"
+ciphertext = sm4.encrypt_ecb(plaintext)
+print(f"密文: {ciphertext.hex().upper()}")
+
+# 解密
+decrypted = sm4.decrypt_ecb(ciphertext)
+print(f"解密: {decrypted.decode()}")
+```
+
+### 推荐的高性能版本
+
+```python
+from src.optimized.sm4_lookup_table import SM4LookupTable
+
+# 使用查找表优化版本，速度提升近2倍
+sm4_fast = SM4LookupTable(key)
+fast_result = sm4_fast.encrypt_ecb(plaintext)
+```
+
 ## 实现版本
 
 ### 1. 基础实现 (basic/sm4_basic.py)

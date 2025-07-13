@@ -289,6 +289,32 @@ class SM4Bitwise:
         
         return self._decrypt_block(ciphertext)
 
+    def encrypt_ecb(self, plaintext: bytes, padding: bool = True) -> bytes:
+        """ECB模式加密"""
+        from ..basic.sm4_basic import SM4Basic
+        temp_sm4 = SM4Basic(self.key)
+        if padding:
+            plaintext = temp_sm4._pkcs7_pad(plaintext)
+        
+        ciphertext = b''
+        for i in range(0, len(plaintext), 16):
+            block = plaintext[i:i+16]
+            ciphertext += self.encrypt_block(block)
+        return ciphertext
+    
+    def decrypt_ecb(self, ciphertext: bytes, padding: bool = True) -> bytes:
+        """ECB模式解密"""
+        plaintext = b''
+        for i in range(0, len(ciphertext), 16):
+            block = ciphertext[i:i+16]
+            plaintext += self.decrypt_block(block)
+        
+        if padding:
+            from ..basic.sm4_basic import SM4Basic
+            temp_sm4 = SM4Basic(self.key)
+            plaintext = temp_sm4._pkcs7_unpad(plaintext)
+        return plaintext
+
     def get_optimization_info(self):
         """
         获取优化信息
