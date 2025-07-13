@@ -243,6 +243,8 @@ python sm4cli.py report -d "描述问题"
 
 ## 📊 性能基准测试
 
+![Performance Comparison](./performance_comparison.png)
+
 ### 吞吐量对比 (MB/s)
 
 ```

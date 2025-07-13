@@ -1,5 +1,7 @@
 ## 📊 Performance Benchmarks
 
+![Performance Comparison](./performance_comparison.png)
+
 ### Throughput Comparison (MB/s)
 
 ```
