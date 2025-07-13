@@ -572,24 +572,11 @@ test: 添加测试
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 🙏 致谢
-
-- [Poseidon2 论文作者](https://eprint.iacr.org/2023/323.pdf)
-- [Circom 开发团队](https://github.com/iden3/circom)
-- [SnarkJS 项目](https://github.com/iden3/snarkjs)
-- 零知识证明社区的贡献者们
-
-## 📞 联系方式
-
-- 项目维护者: [Your Name]
-- 邮箱: [your.email@example.com]
-- 项目主页: [GitHub Repository]
+本项目采用 MIT 许可证。
 
 ---
 
-**注**: 本项目仅用于教育和研究目的。在生产环境使用前请进行充分的安全审计。
+**注**: 本项目仅用于教育和研究目的。
 
 ## 算法数学原理
 
@@ -748,10 +735,10 @@ const isValid = await verifyProof(proof, hash);
 
 ## 参考文献
 
-1. [Poseidon2: A Faster Version of the Poseidon Hash Function](https://eprint.iacr.org/2023/323.pdf)
-2. [Circom 文档](https://docs.circom.io/)
-3. [SnarkJS 文档](https://github.com/iden3/snarkjs)
-4. [Circomlib 示例](https://github.com/iden3/circomlib)
+1. Poseidon2: A Faster Version of the Poseidon Hash Function (IACR ePrint 2023/323)
+2. Circom 电路编程语言
+3. SnarkJS 零知识证明库
+4. Circomlib 电路库
 
 ---
 
