@@ -9,6 +9,7 @@ import sys
 import os
 import binascii
 from pathlib import Path
+from datetime import datetime
 
 # 添加项目根目录到路径
 project_root = Path(__file__).parent.parent
@@ -322,6 +323,41 @@ def test_command(args):
         return 1
 
 
+def report_bug(args):
+    """生成错误报告"""
+    try:
+        print("生成错误报告...")
+        
+        import platform
+        import sys
+        from pathlib import Path
+        
+        report_data = {
+            "时间": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "系统": platform.system(),
+            "架构": platform.machine(),
+            "Python版本": sys.version,
+            "项目路径": str(Path(__file__).parent),
+            "描述": args.description if hasattr(args, 'description') else "用户未提供描述"
+        }
+        
+        report_file = f"bug_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        
+        with open(report_file, 'w', encoding='utf-8') as f:
+            f.write("SM4项目错误报告\n")
+            f.write("=" * 30 + "\n\n")
+            
+            for key, value in report_data.items():
+                f.write(f"{key}: {value}\n")
+            
+            f.write(f"\n详细描述:\n{args.description if hasattr(args, 'description') else '无'}\n")
+        
+        print(f"错误报告已生成: {report_file}")
+        
+    except Exception as e:
+        print(f"生成报告失败: {e}")
+
+
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(description='SM4加密算法命令行工具')
@@ -370,6 +406,10 @@ def main():
     # 测试命令
     test_parser = subparsers.add_parser('test', help='正确性测试')
     
+    # 错误报告命令
+    report_parser = subparsers.add_parser('report', help='生成错误报告')
+    report_parser.add_argument('-d', '--description', help='错误描述')
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -384,6 +424,8 @@ def main():
         return benchmark_command(args)
     elif args.command == 'test':
         return test_command(args)
+    elif args.command == 'report':
+        return report_bug(args)
     
     return 0
 

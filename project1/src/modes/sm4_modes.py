@@ -13,12 +13,17 @@ class SM4Modes:
     """
     SM4加密模式实现类
     
-    支持的模式:
-    - ECB (Electronic Codebook)
-    - CBC (Cipher Block Chaining)
-    - CTR (Counter Mode)
-    - CFB (Cipher Feedback)
-    - OFB (Output Feedback)
+    支持的加密模式：
+    - ECB (电子密码本模式): 最简单但安全性较低，每块独立加密
+    - CBC (密码块链接模式): 通过前一块密文与当前明文异或增强安全性
+    - CTR (计数器模式): 将分组密码转换为流密码，支持并行处理
+    - CFB (密码反馈模式): 自同步流密码模式，适合实时通信
+    - OFB (输出反馈模式): 非自同步流密码模式，错误不会传播
+    
+    安全性说明：
+    - ECB模式不推荐用于重要数据，因为相同明文块产生相同密文
+    - CBC、CTR、CFB、OFB模式都需要初始化向量(IV)确保安全性
+    - 实际应用中推荐使用CBC或CTR模式
     """
     
     def __init__(self, key: bytes):
