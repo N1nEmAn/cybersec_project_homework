@@ -1,0 +1,44 @@
+{
+  "name": "poseidon2-zk-circuit",
+  "version": "1.0.0",
+  "description": "Poseidon2 hash algorithm zero-knowledge circuit implementation",
+  "main": "js/poseidon2.js",
+  "scripts": {
+    "test": "node tests/basic_tests.js",
+    "verify-requirements": "node tests/verify_requirements.js",
+    "test-detailed": "node tests/verify_requirements.js && node tests/basic_tests.js",
+    "benchmark": "node js/poseidon2.js --benchmark",
+    "benchmark-full": "node tests/performance_tests.js",
+    "compile": "./scripts/compile.sh",
+    "prove": "./scripts/prove.sh",
+    "verify": "./scripts/verify.sh",
+    "setup": "./scripts/setup.sh"
+  },
+  "keywords": [
+    "poseidon2",
+    "zero-knowledge",
+    "circom",
+    "groth16",
+    "hash-function",
+    "zk-snark"
+  ],
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "snarkjs": "^0.7.0",
+    "circomlibjs": "^0.1.7",
+    "ffjavascript": "^0.2.60"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.7"
+  },
+  "author": "Cybersec Project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cybersec/poseidon2-zk.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
