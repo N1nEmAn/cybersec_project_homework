@@ -124,6 +124,40 @@ class SM2Basic:
         y3 = (lambda_val * (P.x - x3) - P.y) % self.p
         
         return SM2Point(x3, y3)
+    
+    def point_multiply(self, k: int, P: SM2Point) -> SM2Point:
+        """椭圆曲线标量乘法: k*P (二进制方法)"""
+        if k == 0:
+            return SM2Point(0, 0, True)  # 无穷远点
+        
+        if k == 1:
+            return P
+        
+        if k < 0:
+            k = -k
+            P = SM2Point(P.x, (-P.y) % self.p)
+        
+        # 二进制标量乘法
+        result = SM2Point(0, 0, True)  # 无穷远点
+        addend = P
+        
+        while k:
+            if k & 1:
+                result = self.point_add(result, addend)
+            addend = self.point_double(addend)
+            k >>= 1
+        
+        return result
+    
+    def generate_keypair(self) -> Tuple[int, SM2Point]:
+        """生成SM2密钥对"""
+        # 生成私钥 d ∈ [1, n-1]
+        d = secrets.randbelow(self.n - 1) + 1
+        
+        # 计算公钥 P = d * G
+        P = self.point_multiply(d, self.G)
+        
+        return d, P
 
 if __name__ == "__main__":
     # 基础测试
