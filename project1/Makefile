@@ -1,84 +1,101 @@
-# SM4项目Makefile
-# 提供便捷的项目管理命令
+# SM4 Encryption Algorithm Build System
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c99 -O3 -march=native -mtune=native
+LDFLAGS = -lm
 
-.PHONY: help install test benchmark clean gui cli examples docs
+SRCDIR = src
+TESTDIR = tests
+BENCHDIR = benchmarks
+BINDIR = bin
+OBJDIR = obj
 
-# 默认目标
-help:
-	@echo "SM4加密算法项目 - 可用命令:"
-	@echo ""
-	@echo "  make install     - 安装项目依赖"
-	@echo "  make test        - 运行所有测试"
-	@echo "  make benchmark   - 运行性能基准测试"
-	@echo "  make gui         - 启动GUI界面"
-	@echo "  make cli         - 显示CLI工具帮助"
-	@echo "  make examples    - 运行示例演示"
-	@echo "  make docs        - 生成文档"
-	@echo "  make clean       - 清理临时文件"
-	@echo ""
+BASIC_SOURCES = $(SRCDIR)/sm4_basic.c
+OPTIMIZED_SOURCES = $(SRCDIR)/sm4_optimized.c
+SIMD_SOURCES = $(SRCDIR)/sm4_simd.c
+NEON_SOURCES = $(SRCDIR)/sm4_neon.c
 
-# 安装依赖
-install:
-	@echo "安装项目依赖..."
-	./deploy.sh
+BASIC_OBJECTS = $(OBJDIR)/sm4_basic.o
+OPTIMIZED_OBJECTS = $(OBJDIR)/sm4_optimized.o
+SIMD_OBJECTS = $(OBJDIR)/sm4_simd.o
+NEON_OBJECTS = $(OBJDIR)/sm4_neon.o
 
-# 运行测试
-test:
-	@echo "运行项目测试..."
-	python3 -m pytest tests/ -v
-	python3 sm4cli.py test
+TEST_SOURCES = $(TESTDIR)/test_sm4.c
+BENCHMARK_SOURCES = $(BENCHDIR)/benchmark.c
+QUICK_BENCHMARK_SOURCES = $(BENCHDIR)/quick_benchmark.c
 
-# 性能基准测试
-benchmark:
-	@echo "运行性能基准测试..."
-	python3 comprehensive_benchmark.py
+TEST_BIN = $(BINDIR)/test_sm4
+BENCHMARK_BIN = $(BINDIR)/benchmark
+QUICK_BENCHMARK_BIN = $(BINDIR)/quick_benchmark
 
-# 启动GUI
-gui:
-	@echo "启动GUI界面..."
-	python3 -m src.gui.sm4_gui
+ARCH := $(shell uname -m)
 
-# CLI工具帮助
-cli:
-	@echo "SM4命令行工具帮助:"
-	python3 sm4cli.py --help
+ifeq ($(ARCH),x86_64)
+    ARCH_OBJECTS = $(SIMD_OBJECTS)
+    ARCH_FLAGS = -mavx2 -msse4.1
+else ifeq ($(ARCH),aarch64)
+    ARCH_OBJECTS = $(NEON_OBJECTS)
+    ARCH_FLAGS = -march=armv8-a+simd
+else
+    ARCH_OBJECTS =
+    ARCH_FLAGS =
+endif
 
-# 运行示例
-examples:
-	@echo "运行示例演示..."
-	python3 examples/sm4_examples.py
+ALL_OBJECTS = $(BASIC_OBJECTS) $(OPTIMIZED_OBJECTS) $(ARCH_OBJECTS)
 
-# 生成文档
-docs:
-	@echo "项目文档位置:"
-	@echo "  docs/algorithm_analysis.md    - 算法分析"
-	@echo "  docs/optimization_process.md  - 优化过程"
-	@echo "  docs/performance_report.md    - 性能报告"
-	@echo "  docs/arch_linux_setup.md      - Arch Linux设置"
+.PHONY: all directories test quick-test benchmark clean help
 
-# 清理临时文件
+all: directories $(TEST_BIN) $(BENCHMARK_BIN) $(QUICK_BENCHMARK_BIN)
+
+directories:
+	mkdir -p $(OBJDIR) $(BINDIR)
+
+$(BASIC_OBJECTS): $(BASIC_SOURCES) $(SRCDIR)/sm4.h
+	$(CC) $(CFLAGS) -c $(BASIC_SOURCES) -o $@
+
+$(OPTIMIZED_OBJECTS): $(OPTIMIZED_SOURCES) $(SRCDIR)/sm4.h
+	$(CC) $(CFLAGS) -c $(OPTIMIZED_SOURCES) -o $@
+
+$(SIMD_OBJECTS): $(SIMD_SOURCES) $(SRCDIR)/sm4.h
+ifeq ($(ARCH),x86_64)
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) -c $(SIMD_SOURCES) -o $@
+else
+	touch $@
+endif
+
+$(NEON_OBJECTS): $(NEON_SOURCES) $(SRCDIR)/sm4.h
+ifeq ($(ARCH),aarch64)
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) -c $(NEON_SOURCES) -o $@
+else
+	touch $@
+endif
+
+$(TEST_BIN): $(TEST_SOURCES) $(ALL_OBJECTS)
+	$(CC) $(CFLAGS) $(TEST_SOURCES) $(ALL_OBJECTS) -o $@ $(LDFLAGS)
+
+$(BENCHMARK_BIN): $(BENCHMARK_SOURCES) $(ALL_OBJECTS)
+	$(CC) $(CFLAGS) $(BENCHMARK_SOURCES) $(ALL_OBJECTS) -o $@ $(LDFLAGS)
+
+$(QUICK_BENCHMARK_BIN): $(QUICK_BENCHMARK_SOURCES) $(ALL_OBJECTS)
+	$(CC) $(CFLAGS) $(QUICK_BENCHMARK_SOURCES) $(ALL_OBJECTS) -o $@ $(LDFLAGS)
+
+test: $(TEST_BIN)
+	./$(TEST_BIN)
+
+quick-test: $(QUICK_BENCHMARK_BIN)
+	./$(QUICK_BENCHMARK_BIN)
+
+benchmark: $(BENCHMARK_BIN)
+	./$(BENCHMARK_BIN)
+
 clean:
-	@echo "清理临时文件..."
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.sm4" -delete 2>/dev/null || true
-	find . -type f -name "*.decrypted" -delete 2>/dev/null || true
-	find . -type f -name "benchmark_results.json" -delete 2>/dev/null || true
-	@echo "清理完成"
+	rm -rf $(OBJDIR) $(BINDIR)
 
-# 快速测试（仅基础功能）
-quick-test:
-	@echo "运行快速测试..."
-	python3 -c "from src.basic.sm4_basic import SM4Basic; print('基础实现测试:', '✓' if SM4Basic(b'\\x01'*16).encrypt_block(b'\\x00'*16) else '✗')"
-
-# 代码格式检查
-format-check:
-	@echo "检查代码格式..."
-	python3 -m py_compile src/basic/sm4_basic.py
-	python3 -m py_compile src/optimized/sm4_lookup_table.py
-	python3 -m py_compile src/modes/sm4_modes.py
-	@echo "代码格式检查通过"
-
-# 完整验证
-validate: test benchmark examples
-	@echo "完整项目验证通过 ✓"
+help:
+	@echo "SM4 Build System"
+	@echo "Available targets:"
+	@echo "  all          - Build all executables"
+	@echo "  test         - Run test suite"
+	@echo "  quick-test   - Run quick performance test"
+	@echo "  benchmark    - Run comprehensive benchmark"
+	@echo "  clean        - Clean build artifacts"
+	@echo "  help         - Show this help"

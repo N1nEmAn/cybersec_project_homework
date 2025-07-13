@@ -1,0 +1,58 @@
+SM4算法性能基准测试结果
+==================================================
+测试时间: 2025-07-13 11:59:58
+
+Basic_single - block:
+  avg_time: 0.7718
+  std_time: 0.0125
+  throughput: 12956.6585
+  time_per_block: 77.1804
+
+LookupTable_single - block:
+  avg_time: 0.3551
+  std_time: 0.0041
+  throughput: 28163.4046
+  time_per_block: 35.5071
+
+Bitwise_single - block:
+  avg_time: 0.8364
+  std_time: 0.0051
+  throughput: 11956.5739
+  time_per_block: 83.6360
+
+Basic_large - data:
+  avg_time: 4.9522
+  std_time: 0.0753
+  throughput_mbps: 0.2019
+  data_size_kb: 1024
+
+LookupTable_large - data:
+  avg_time: 2.1987
+  std_time: 0.0188
+  throughput_mbps: 0.4548
+  data_size_kb: 1024
+
+Bitwise_large - data:
+  avg_time: 5.2940
+  std_time: 0.0262
+  throughput_mbps: 0.1889
+  data_size_kb: 1024
+
+Basic_key - expansion:
+  avg_time: 0.0567
+  std_time: 0.0023
+  throughput: 17646.3181
+  time_per_expansion: 56.6690
+
+LookupTable_key - expansion:
+  avg_time: 1.2585
+  std_time: 0.0239
+  throughput: 794.6282
+  time_per_expansion: 1258.4502
+
+Bitwise_key - expansion:
+  avg_time: 0.1579
+  std_time: 0.0166
+  throughput: 6331.7846
+  time_per_expansion: 157.9334
+
