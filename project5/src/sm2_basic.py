@@ -158,6 +158,100 @@ class SM2Basic:
         P = self.point_multiply(d, self.G)
         
         return d, P
+    
+    def _sm3_hash(self, data: bytes) -> bytes:
+        """SM3哈希函数的简化实现"""
+        # 注：这里使用SHA-256作为替代，实际应用中应使用真正的SM3
+        return hashlib.sha256(data).digest()
+    
+    def _get_user_id_hash(self, user_id: bytes = b"1234567812345678") -> bytes:
+        """计算用户身份标识哈希值ZA"""
+        # ENTL: 用户身份标识长度（16位）
+        entl = (len(user_id) * 8).to_bytes(2, byteorder='big')
+        
+        # 构造ZA的输入
+        za_input = (entl + user_id + 
+                   self.a.to_bytes(32, byteorder='big') +
+                   self.b.to_bytes(32, byteorder='big') +
+                   self.Gx.to_bytes(32, byteorder='big') +
+                   self.Gy.to_bytes(32, byteorder='big'))
+        
+        return self._sm3_hash(za_input)
+    
+    def sign(self, message: bytes, private_key: int, user_id: bytes = b"1234567812345678") -> Tuple[int, int]:
+        """SM2数字签名"""
+        # 计算ZA
+        za = self._get_user_id_hash(user_id)
+        
+        # 计算消息摘要 e = H(ZA || M)
+        m_prime = za + message
+        digest = self._sm3_hash(m_prime)
+        e = int.from_bytes(digest, byteorder='big')
+        
+        while True:
+            # 生成随机数 k ∈ [1, n-1]
+            k = secrets.randbelow(self.n - 1) + 1
+            
+            # 计算 (x1, y1) = k * G
+            point = self.point_multiply(k, self.G)
+            x1 = point.x
+            
+            # 计算 r = (e + x1) mod n
+            r = (e + x1) % self.n
+            
+            # 如果 r = 0 或 r + k = n，重新选择k
+            if r == 0 or (r + k) % self.n == 0:
+                continue
+            
+            # 计算 s = (1 + da)^(-1) * (k - r * da) mod n
+            da_inv = self._mod_inverse((1 + private_key) % self.n, self.n)
+            s = (da_inv * (k - (r * private_key) % self.n)) % self.n
+            
+            # 如果 s = 0，重新选择k
+            if s == 0:
+                continue
+            
+            return r, s
+    
+    def verify(self, message: bytes, signature: Tuple[int, int], public_key: SM2Point, 
+               user_id: bytes = b"1234567812345678") -> bool:
+        """SM2数字签名验证"""
+        r, s = signature
+        
+        # 检查签名参数范围
+        if not (1 <= r <= self.n - 1) or not (1 <= s <= self.n - 1):
+            return False
+        
+        # 计算ZA
+        za = self._get_user_id_hash(user_id)
+        
+        # 计算消息摘要 e = H(ZA || M)
+        m_prime = za + message
+        digest = self._sm3_hash(m_prime)
+        e = int.from_bytes(digest, byteorder='big')
+        
+        # 计算 t = (r + s) mod n
+        t = (r + s) % self.n
+        
+        # 如果 t = 0，签名无效
+        if t == 0:
+            return False
+        
+        # 计算 (x1', y1') = s * G + t * PA
+        point1 = self.point_multiply(s, self.G)
+        point2 = self.point_multiply(t, public_key)
+        point_sum = self.point_add(point1, point2)
+        
+        if point_sum.infinity:
+            return False
+        
+        x1_prime = point_sum.x
+        
+        # 计算 R = (e + x1') mod n
+        R = (e + x1_prime) % self.n
+        
+        # 验证 R = r
+        return R == r
 
 if __name__ == "__main__":
     # 基础测试
