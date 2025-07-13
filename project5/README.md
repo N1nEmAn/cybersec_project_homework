@@ -12,6 +12,14 @@
 | Optimized | 雅可比坐标 | Montgomery阶梯 | 基点表 | 无 | 1.8x |
 | SIMD | 雅可比坐标 | 窗口方法 | 多级表 | 支持 | 2.6x |
 
+#### 版本对比分析图表
+
+**加速比分析**:
+![加速分析](charts/speedup_analysis.png)
+
+**效率雷达图**:
+![效率雷达图](charts/efficiency_radar.png)
+
 ## 性能测试结果
 
 ### 真实性能数据
@@ -30,6 +38,17 @@
 - **数字签名**: 性能最优(22.3ms)，随机数生成是主要开销
 - **签名验证**: 耗时最长(42.8ms)，需要两次点乘运算
 - **算法正确性**: 通过了包括中文字符、二进制数据等5种消息类型测试
+
+#### 性能分析图表
+
+**操作时间对比**:
+![操作对比](charts/operations_comparison.png)
+
+**性能分布分析**:
+![操作分解](charts/operation_breakdown.png)
+
+**吞吐量热图**:
+![吞吐量热图](charts/throughput_heatmap.png)
 
 ### 操作时间分布
 
@@ -275,6 +294,20 @@ n = FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B61C6AF347D568AEDCE6AF48A03
 - 椭圆曲线标量乘法: O(log n) 次点加法/倍点运算
 - Montgomery阶梯优化: 固定时间复杂度，抗侧信道攻击
 - 预计算表优化: 空间换时间，减少约40%计算量
+
+#### 算法分析图表
+
+**核心算法流程图**:
+![算法分析](charts/algorithm_analysis.png)
+
+**安全性分析对比**:
+![安全性分析](charts/security_analysis.png)
+
+**计算复杂度可视化**:
+![复杂度分析](charts/complexity_analysis.png)
+
+**性能优化影响分析**:
+![优化影响](charts/optimization_impact.png)
 
 ### 安全性分析
 
