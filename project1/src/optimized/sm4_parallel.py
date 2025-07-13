@@ -261,6 +261,66 @@ class SM4Parallel:
             "best_use_case": "大文件加密、批量数据处理"
         }
         return info
+    
+    def encrypt_block(self, plaintext: bytes) -> bytes:
+        """
+        加密单个16字节块（公共接口）
+        
+        Args:
+            plaintext: 16字节明文块
+            
+        Returns:
+            16字节密文块
+        """
+        if len(plaintext) != 16:
+            raise ValueError("明文块必须为16字节")
+        
+        return self._encrypt_block(plaintext)
+    
+    def decrypt_block(self, ciphertext: bytes) -> bytes:
+        """
+        解密单个16字节块（公共接口）
+        
+        Args:
+            ciphertext: 16字节密文块
+            
+        Returns:
+            16字节明文块
+        """
+        if len(ciphertext) != 16:
+            raise ValueError("密文块必须为16字节")
+        
+        return self._decrypt_block(ciphertext)
+    
+    def _encrypt_block(self, plaintext):
+        """
+        加密单个数据块（内部方法）
+        
+        Args:
+            plaintext (bytes): 16字节明文块
+            
+        Returns:
+            bytes: 16字节密文块
+        """
+        # 单块加密直接使用基础实现
+        from ..basic.sm4_basic import SM4Basic
+        basic_sm4 = SM4Basic(self.key)
+        return basic_sm4._encrypt_block(plaintext)
+    
+    def _decrypt_block(self, ciphertext):
+        """
+        解密单个数据块（内部方法）
+        
+        Args:
+            ciphertext (bytes): 16字节密文块
+            
+        Returns:
+            bytes: 16字节明文块
+        """
+        # 单块解密直接使用基础实现
+        from ..basic.sm4_basic import SM4Basic
+        basic_sm4 = SM4Basic(self.key)
+        return basic_sm4._decrypt_block(ciphertext)
 
 # 测试函数
 def test_parallel_sm4():

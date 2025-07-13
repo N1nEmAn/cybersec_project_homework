@@ -185,6 +185,51 @@ class SM4Bitwise:
         y = [x[3], x[2], x[1], x[0]]
         return int_list_to_bytes(y)
     
+    def _encrypt_block(self, plaintext):
+        """
+        加密单个数据块（内部方法）
+        
+        Args:
+            plaintext (bytes): 16字节明文块
+            
+        Returns:
+            bytes: 16字节密文块
+        """
+        # 转换为32位整数列表
+        x = bytes_to_int_list(plaintext)
+        
+        # 32轮加密变换
+        for i in range(ROUNDS):
+            x[0], x[1], x[2], x[3] = x[1], x[2], x[3], self._round_function_t_fast(x[0], x[1], x[2], x[3], self.round_keys[i])
+        
+        # 反序变换 (X32, X31, X30, X29)
+        result = [x[3], x[2], x[1], x[0]]
+        
+        return int_list_to_bytes(result)
+    
+    def _decrypt_block(self, ciphertext):
+        """
+        解密单个数据块（内部方法）
+        
+        Args:
+            ciphertext (bytes): 16字节密文块
+            
+        Returns:
+            bytes: 16字节明文块
+        """
+        # 转换为32位整数列表
+        x = bytes_to_int_list(ciphertext)
+        
+        # 32轮解密变换（使用逆序轮密钥）
+        for i in range(ROUNDS):
+            rk = self.round_keys[ROUNDS - 1 - i]
+            x[0], x[1], x[2], x[3] = x[1], x[2], x[3], self._round_function_t_fast(x[0], x[1], x[2], x[3], rk)
+        
+        # 反序变换
+        result = [x[3], x[2], x[1], x[0]]
+        
+        return int_list_to_bytes(result)
+
     def encrypt(self, plaintext):
         """
         加密数据（ECB模式）
@@ -214,6 +259,36 @@ class SM4Bitwise:
         
         return bytes(plaintext)
     
+    def encrypt_block(self, plaintext: bytes) -> bytes:
+        """
+        加密单个16字节块（公共接口）
+        
+        Args:
+            plaintext: 16字节明文块
+            
+        Returns:
+            16字节密文块
+        """
+        if len(plaintext) != 16:
+            raise ValueError("明文块必须为16字节")
+        
+        return self._encrypt_block(plaintext)
+    
+    def decrypt_block(self, ciphertext: bytes) -> bytes:
+        """
+        解密单个16字节块（公共接口）
+        
+        Args:
+            ciphertext: 16字节密文块
+            
+        Returns:
+            16字节明文块
+        """
+        if len(ciphertext) != 16:
+            raise ValueError("密文块必须为16字节")
+        
+        return self._decrypt_block(ciphertext)
+
     def get_optimization_info(self):
         """
         获取优化信息

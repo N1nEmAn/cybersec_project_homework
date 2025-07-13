@@ -180,6 +180,36 @@ class SM4LookupTable:
         
         return bytes(plaintext)
     
+    def encrypt_block(self, plaintext: bytes) -> bytes:
+        """
+        加密单个16字节块（公共接口）
+        
+        Args:
+            plaintext: 16字节明文块
+            
+        Returns:
+            16字节密文块
+        """
+        if len(plaintext) != 16:
+            raise ValueError("明文块必须为16字节")
+        
+        return self._encrypt_block(plaintext)
+    
+    def decrypt_block(self, ciphertext: bytes) -> bytes:
+        """
+        解密单个16字节块（公共接口）
+        
+        Args:
+            ciphertext: 16字节密文块
+            
+        Returns:
+            16字节明文块
+        """
+        if len(ciphertext) != 16:
+            raise ValueError("密文块必须为16字节")
+        
+        return self._decrypt_block(ciphertext)
+
     def get_optimization_info(self):
         """
         获取优化信息
