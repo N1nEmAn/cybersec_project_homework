@@ -297,9 +297,6 @@ n = FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B61C6AF347D568AEDCE6AF48A03
 
 #### 算法分析图表
 
-**核心算法流程图**:
-![算法分析](charts/algorithm_analysis.png)
-
 **安全性分析对比**:
 ![安全性分析](charts/security_analysis.png)
 
