@@ -27,7 +27,12 @@ plt.rcParams['figure.titlesize'] = 16
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'benchmarks'))
 
-from performance_benchmark import DDHPSIBenchmark
+try:
+    from performance_benchmark import DDHPSIBenchmark
+except ImportError:
+    # 如果基准测试不可用，使用模拟数据
+    print("Warning: performance_benchmark module not found, using mock data")
+    DDHPSIBenchmark = None
 
 
 class ChartGenerator:
@@ -41,7 +46,11 @@ class ChartGenerator:
             output_dir: 图表输出目录
         """
         self.output_dir = output_dir or os.path.dirname(__file__)
-        self.benchmark = DDHPSIBenchmark()
+        if DDHPSIBenchmark is not None:
+            self.benchmark = DDHPSIBenchmark()
+        else:
+            self.benchmark = None
+            print("Using mock data for chart generation")
     
     def generate_performance_comparison_chart(self):
         """生成性能对比图表"""
