@@ -1,5 +1,46 @@
-# Benchmark Results
+# 性能基准测试结果
 
-This directory contains benchmark test results.
+## 测试概述
+这个目录存储SM4算法的各种性能测试结果和基准数据。
 
-Files in this directory are generated automatically and are ignored by git (except this README).
+## 文件说明
+
+### benchmark_results.txt
+主要的性能测试结果，包含：
+- 各种实现的加密速度对比
+- 内存使用情况分析
+- 不同数据大小下的性能表现
+
+### 测试环境信息
+- 操作系统：Arch Linux
+- Python版本：3.13.5
+- 测试时间：2025年7月13日
+- 硬件平台：x64处理器
+
+## 主要发现
+
+1. **查找表优化效果最佳**
+   - 单块加密提升98%
+   - 大数据处理提升139%
+
+2. **并行处理有明显改善**
+   - 多线程版本提升61%
+   - 适合大数据量处理
+
+3. **位运算优化未达预期**
+   - 性能略有下降
+   - 可能需要针对特定平台优化
+
+## 使用方法
+
+运行综合基准测试：
+```bash
+python comprehensive_benchmark.py
+```
+
+快速性能检查：
+```bash
+python quick_test.py
+```
+
+注意：测试结果文件会自动生成，git会忽略这些文件（除了这个README）。

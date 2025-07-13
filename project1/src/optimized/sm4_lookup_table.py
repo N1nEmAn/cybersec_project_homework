@@ -221,6 +221,59 @@ class SM4LookupTable:
             "optimization_benefit": "将S盒变换和线性变换合并为单次查表操作"
         }
         return info
+    
+    def encrypt_ecb(self, plaintext: bytes, padding: bool = True) -> bytes:
+        """
+        ECB模式加密
+        
+        Args:
+            plaintext: 明文
+            padding: 是否使用PKCS7填充
+            
+        Returns:
+            密文
+        """
+        from ..basic.sm4_basic import SM4Basic
+        # 临时创建基础实现来处理ECB模式
+        temp_sm4 = SM4Basic(self.key)
+        if padding:
+            plaintext = temp_sm4._pkcs7_pad(plaintext)
+        
+        if len(plaintext) % 16 != 0:
+            raise ValueError("明文长度必须是16的倍数")
+        
+        ciphertext = b''
+        for i in range(0, len(plaintext), 16):
+            block = plaintext[i:i+16]
+            ciphertext += self.encrypt_block(block)
+        
+        return ciphertext
+    
+    def decrypt_ecb(self, ciphertext: bytes, padding: bool = True) -> bytes:
+        """
+        ECB模式解密
+        
+        Args:
+            ciphertext: 密文
+            padding: 是否使用PKCS7填充
+            
+        Returns:
+            明文
+        """
+        if len(ciphertext) % 16 != 0:
+            raise ValueError("密文长度必须是16的倍数")
+        
+        plaintext = b''
+        for i in range(0, len(ciphertext), 16):
+            block = ciphertext[i:i+16]
+            plaintext += self.decrypt_block(block)
+        
+        if padding:
+            from ..basic.sm4_basic import SM4Basic
+            temp_sm4 = SM4Basic(self.key)
+            plaintext = temp_sm4._pkcs7_unpad(plaintext)
+        
+        return plaintext
 
 # 测试函数
 def test_lookup_table_sm4():
