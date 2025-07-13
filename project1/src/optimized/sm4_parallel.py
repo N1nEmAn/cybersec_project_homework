@@ -321,6 +321,18 @@ class SM4Parallel:
         from ..basic.sm4_basic import SM4Basic
         basic_sm4 = SM4Basic(self.key)
         return basic_sm4._decrypt_block(ciphertext)
+    
+    def encrypt_ecb(self, plaintext: bytes, padding: bool = True) -> bytes:
+        """ECB模式加密"""
+        from ..basic.sm4_basic import SM4Basic
+        temp_sm4 = SM4Basic(self.key)
+        return temp_sm4.encrypt_ecb(plaintext, padding)
+    
+    def decrypt_ecb(self, ciphertext: bytes, padding: bool = True) -> bytes:
+        """ECB模式解密"""
+        from ..basic.sm4_basic import SM4Basic
+        temp_sm4 = SM4Basic(self.key)
+        return temp_sm4.decrypt_ecb(ciphertext, padding)
 
 # 测试函数
 def test_parallel_sm4():
