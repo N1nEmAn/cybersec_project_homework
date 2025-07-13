@@ -211,3 +211,32 @@ ciphertext = sm4_opt.encrypt_ecb(b"Hello, SM4!")
 sm4_modes = SM4Modes(key)
 ciphertext, iv = sm4_modes.encrypt_cbc(b"Hello, SM4!")
 ```
+
+## 🚀 新增功能
+
+### 性能对比演示
+```bash
+# 运行性能对比演示（需要matplotlib）
+python performance_demo.py
+
+# 如果缺少依赖，请先安装：
+pip install matplotlib numpy
+```
+
+### 实现验证工具
+```bash
+# 验证所有实现的正确性
+python validate_implementations.py
+```
+
+### 数学推导文档
+查看 `docs/algorithm_analysis.md` 了解：
+- 算法复杂度分析
+- 优化策略的数学推导
+- 理论 vs 实际性能对比
+
+### 错误报告功能
+```bash
+# 生成错误报告
+python sm4cli.py report -d "描述问题"
+```
