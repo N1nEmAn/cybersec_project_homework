@@ -258,7 +258,7 @@ n = FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B61C6AF347D568AEDCE6AF48A03
 - **已知攻击**: Pollard's rho攻击复杂度为O(√n)
 - **侧信道防护**: Montgomery阶梯算法提供恒定时间执行
 
-## 最新测试结果 (2024年实测数据)
+## 项目测试结果
 
 ### 完整演示测试结果
 
