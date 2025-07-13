@@ -94,13 +94,16 @@ python benchmarks/benchmark.py
 - [x] 查找表优化实现
 - [x] 位运算优化实现
 - [x] 并行优化实现
+- [x] 向量化优化实现
+- [x] 硬件加速实现
 - [x] 完整的测试套件
 - [x] 性能基准测试
 - [x] 详细技术文档
 - [x] Arch Linux环境适配
-- [ ] 硬件加速探索
-- [ ] 更多加密模式支持 (CBC, CTR等)
-- [ ] GUI演示程序
+- [x] 多种加密模式支持 (ECB, CBC, CTR, CFB, OFB)
+- [x] GUI演示程序
+- [x] 命令行工具
+- [ ] 最终性能优化和文档完善
 
 ## 贡献指南
 
@@ -119,3 +122,61 @@ python benchmarks/benchmark.py
 ## 许可证
 
 本项目仅用于学术研究和课程作业，不得用于商业用途。
+
+## 使用方法
+
+### 命令行工具
+
+项目提供了功能完整的命令行工具 `sm4cli.py`：
+
+```bash
+# 基础加密解密
+python sm4cli.py encrypt -k 0123456789ABCDEFFEDCBA9876543210
+python sm4cli.py decrypt -k 0123456789ABCDEFFEDCBA9876543210
+
+# 使用不同加密模式
+python sm4cli.py encrypt -k [密钥] -m cbc --output-iv
+python sm4cli.py encrypt -k [密钥] -m ctr --hex-output
+
+# 性能测试
+python sm4cli.py benchmark
+python sm4cli.py test
+
+# 查看帮助
+python sm4cli.py --help
+```
+
+### GUI界面
+
+启动图形用户界面：
+
+```bash
+python -m src.gui.sm4_gui
+```
+
+GUI提供以下功能：
+- 基础加密解密测试
+- 多种优化实现比较
+- 全部加密模式演示
+- 性能基准测试
+
+### Python API
+
+```python
+from src.basic.sm4_basic import SM4Basic
+from src.optimized.sm4_lookup_table import SM4LookupTable
+from src.modes.sm4_modes import SM4Modes
+
+# 基础使用
+key = bytes.fromhex('0123456789ABCDEFFEDCBA9876543210')
+sm4 = SM4Basic(key)
+ciphertext = sm4.encrypt_ecb(b"Hello, SM4!")
+
+# 优化实现
+sm4_opt = SM4LookupTable(key)
+ciphertext = sm4_opt.encrypt_ecb(b"Hello, SM4!")
+
+# 加密模式
+sm4_modes = SM4Modes(key)
+ciphertext, iv = sm4_modes.encrypt_cbc(b"Hello, SM4!")
+```
