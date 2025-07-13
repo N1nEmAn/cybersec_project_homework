@@ -1,0 +1,95 @@
+{
+  "test_vectors": {
+    "config_256_2_5": {
+      "description": "配置 (n,t,d) = (256,2,5) 的测试向量",
+      "parameters": {
+        "field_size": 256,
+        "state_size": 2,
+        "sbox_degree": 5,
+        "full_rounds": 8,
+        "partial_rounds": 57
+      },
+      "vectors": [
+        {
+          "input": ["0", "0"],
+          "expected_hash": "placeholder_hash_1",
+          "description": "零向量测试"
+        },
+        {
+          "input": ["1", "2"],
+          "expected_hash": "placeholder_hash_2", 
+          "description": "基本整数测试"
+        },
+        {
+          "input": ["123", "456"],
+          "expected_hash": "placeholder_hash_3",
+          "description": "中等大小整数测试"
+        },
+        {
+          "input": ["9999999999", "8888888888"],
+          "expected_hash": "placeholder_hash_4",
+          "description": "大整数测试"
+        }
+      ]
+    },
+    "config_256_3_5": {
+      "description": "配置 (n,t,d) = (256,3,5) 的测试向量",
+      "parameters": {
+        "field_size": 256,
+        "state_size": 3,
+        "sbox_degree": 5,
+        "full_rounds": 8,
+        "partial_rounds": 56
+      },
+      "vectors": [
+        {
+          "input": ["0", "0", "0"],
+          "expected_hash": "placeholder_hash_5",
+          "description": "零向量测试"
+        },
+        {
+          "input": ["1", "2", "3"],
+          "expected_hash": "placeholder_hash_6",
+          "description": "基本整数测试"
+        },
+        {
+          "input": ["100", "200", "300"],
+          "expected_hash": "placeholder_hash_7",
+          "description": "中等大小整数测试"
+        },
+        {
+          "input": ["1111111111", "2222222222", "3333333333"],
+          "expected_hash": "placeholder_hash_8",
+          "description": "大整数测试"
+        }
+      ]
+    },
+    "groth16_test_cases": {
+      "description": "Groth16 零知识证明测试用例",
+      "test_cases": [
+        {
+          "circuit_input": {
+            "preimage": ["123", "456"],
+            "expectedHash": "placeholder_hash_computed"
+          },
+          "description": "基本证明生成测试",
+          "expected_result": "proof_generation_success"
+        },
+        {
+          "circuit_input": {
+            "preimage": ["0", "1"],
+            "expectedHash": "placeholder_hash_computed"
+          },
+          "description": "包含零值的证明测试",
+          "expected_result": "proof_generation_success"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2024-07-13",
+    "curve": "bn128",
+    "field_prime": "21888242871839275222246405745257275088548364400416034343698204186575808495617"
+  }
+}
