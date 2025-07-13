@@ -53,6 +53,78 @@ class SM2Basic:
         right = (point.x * point.x * point.x + self.a * point.x + self.b) % self.p
         return left == right
 
+    def _mod_inverse(self, a: int, m: int) -> int:
+        """计算模逆: a^(-1) mod m"""
+        if a < 0:
+            a = (a % m + m) % m
+        
+        # 扩展欧几里得算法
+        def extended_gcd(a, b):
+            if a == 0:
+                return b, 0, 1
+            gcd, x1, y1 = extended_gcd(b % a, a)
+            x = y1 - (b // a) * x1
+            y = x1
+            return gcd, x, y
+        
+        gcd, x, _ = extended_gcd(a, m)
+        if gcd != 1:
+            raise ValueError("模逆不存在")
+        return (x % m + m) % m
+    
+    def point_add(self, P: SM2Point, Q: SM2Point) -> SM2Point:
+        """椭圆曲线点加法"""
+        # 处理无穷远点
+        if P.infinity:
+            return Q
+        if Q.infinity:
+            return P
+        
+        # 点P和Q相同
+        if P.x == Q.x and P.y == Q.y:
+            return self.point_double(P)
+        
+        # 点P和Q关于x轴对称
+        if P.x == Q.x:
+            return SM2Point(0, 0, True)  # 无穷远点
+        
+        # 一般情况的点加法
+        # λ = (y₂ - y₁) / (x₂ - x₁) mod p
+        dy = (Q.y - P.y) % self.p
+        dx = (Q.x - P.x) % self.p
+        dx_inv = self._mod_inverse(dx, self.p)
+        lambda_val = (dy * dx_inv) % self.p
+        
+        # x₃ = λ² - x₁ - x₂ mod p
+        x3 = (lambda_val * lambda_val - P.x - Q.x) % self.p
+        
+        # y₃ = λ(x₁ - x₃) - y₁ mod p
+        y3 = (lambda_val * (P.x - x3) - P.y) % self.p
+        
+        return SM2Point(x3, y3)
+    
+    def point_double(self, P: SM2Point) -> SM2Point:
+        """椭圆曲线点倍乘"""
+        if P.infinity:
+            return P
+        
+        if P.y == 0:
+            return SM2Point(0, 0, True)  # 无穷远点
+        
+        # λ = (3x₁² + a) / (2y₁) mod p
+        numerator = (3 * P.x * P.x + self.a) % self.p
+        denominator = (2 * P.y) % self.p
+        denominator_inv = self._mod_inverse(denominator, self.p)
+        lambda_val = (numerator * denominator_inv) % self.p
+        
+        # x₃ = λ² - 2x₁ mod p
+        x3 = (lambda_val * lambda_val - 2 * P.x) % self.p
+        
+        # y₃ = λ(x₁ - x₃) - y₁ mod p
+        y3 = (lambda_val * (P.x - x3) - P.y) % self.p
+        
+        return SM2Point(x3, y3)
+
 if __name__ == "__main__":
     # 基础测试
     sm2 = SM2Basic()
