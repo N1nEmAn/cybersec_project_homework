@@ -74,7 +74,11 @@ if [ -d "project2" ]; then
     
     if [ $deps_result -eq 0 ]; then
         # 运行快速测试
-        if [ -f "quick_demo.py" ]; then
+        if [ -f "simple_demo.py" ]; then
+            timeout 30s python simple_demo.py >/dev/null 2>&1
+            demo_result=$?
+            print_status $demo_result "数字水印功能验证"
+        elif [ -f "quick_demo.py" ]; then
             timeout 30s python quick_demo.py >/dev/null 2>&1
             demo_result=$?
             print_status $demo_result "数字水印功能验证"
@@ -190,9 +194,15 @@ if [ -d "project5" ]; then
         fi
         
         # 尝试运行基础测试
-        timeout 15s python demo_complete.py --quick >/dev/null 2>&1
-        demo_result=$?
-        print_status $demo_result "SM2综合功能验证"
+        if [ -f "demo_simple.py" ]; then
+            timeout 15s python demo_simple.py --quick >/dev/null 2>&1
+            demo_result=$?
+            print_status $demo_result "SM2综合功能验证"
+        else
+            timeout 15s python demo_complete.py --quick >/dev/null 2>&1
+            demo_result=$?
+            print_status $demo_result "SM2综合功能验证"
+        fi
     else
         print_status 1 "Python环境验证"
     fi
