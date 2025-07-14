@@ -1,52 +1,50 @@
-# SM2 Performance Summary
+# SM2 性能摘要
 
-## 性能测试摘要 (Performance Summary)
+## 性能测试摘要
 
-### 测试环境 (Test Environment)
-- CPU: x64 Architecture
-- Memory: 16GB RAM
-- Python: 3.x
-- Test Iterations: 100 per measurement
+### 测试环境
+- **处理器**：x64 架构
+- **内存**：16GB
+- **Python 版本**：3.x
+- **测试迭代次数**：每次测量 100 次
 
-### 核心性能指标 (Core Performance Metrics)
+### 核心性能指标
 
-#### 密钥生成 (Key Generation)
-- **Basic**: 45.2ms (22.1 ops/sec)
-- **Optimized**: 25.3ms (39.5 ops/sec) - **1.79x faster**
-- **SIMD**: 17.8ms (56.2 ops/sec) - **2.54x faster**
+#### 密钥生成
+- **基础实现**：45.2 毫秒 (每秒 22.1 次操作)
+- **优化实现**：25.3 毫秒 (每秒 39.5 次操作) - **速度提升 1.79 倍**
+- **SIMD 实现**：17.8 毫秒 (每秒 56.2 次操作) - **速度提升 2.54 倍**
 
-#### 数字签名 (Digital Signing)
-- **Basic**: 38.5ms (26.0 ops/sec)
-- **Optimized**: 21.2ms (47.2 ops/sec) - **1.82x faster**
-- **SIMD**: 15.1ms (66.2 ops/sec) - **2.55x faster**
+#### 数字签名
+- **基础实现**：38.5 毫秒 (每秒 26.0 次操作)
+- **优化实现**：21.2 毫秒 (每秒 47.2 次操作) - **速度提升 1.82 倍**
+- **SIMD 实现**：15.1 毫秒 (每秒 66.2 次操作) - **速度提升 2.55 倍**
 
-#### 签名验证 (Signature Verification)
-- **Basic**: 42.1ms (23.8 ops/sec)
-- **Optimized**: 23.5ms (42.6 ops/sec) - **1.79x faster**
-- **SIMD**: 16.3ms (61.3 ops/sec) - **2.58x faster**
+#### 签名验证
+- **基础实现**：42.1 毫秒 (每秒 23.8 次操作)
+- **优化实现**：23.5 毫秒 (每秒 42.6 次操作) - **速度提升 1.79 倍**
+- **SIMD 实现**：16.3 毫秒 (每秒 61.3 次操作) - **速度提升 2.58 倍**
 
-### 批量处理性能 (Batch Processing Performance)
+### 批量处理性能
 
-#### SIMD批量验证加速比 (SIMD Batch Verification Speedup)
-- **10 signatures**: 1.36x speedup
-- **25 signatures**: 1.43x speedup
-- **50 signatures**: 1.57x speedup
-- **100 signatures**: 1.66x speedup
+#### SIMD 批量验证加速比
+- **10 个签名**：1.36 倍加速
+- **25 个签名**：1.43 倍加速
+- **50 个签名**：1.57 倍加速
+- **100 个签名**：1.66 倍加速
 
-### 优化技术效果 (Optimization Techniques Impact)
+### 优化技术效果
 
-1. **雅可比坐标系 (Jacobian Coordinates)**: ~1.8x improvement
-2. **预计算表 (Precomputed Tables)**: ~1.4x additional improvement
-3. **窗口方法 (Windowing Method)**: ~1.2x additional improvement
-4. **批量处理 (Batch Processing)**: Up to 1.6x for multiple operations
+1.  **雅可比坐标系**：约 1.8 倍性能提升
+2.  **预计算表**：额外约 1.4 倍性能提升
+3.  **窗口方法**：额外约 1.2 倍性能提升
+4.  **批量处理**：对于多重操作，最高可达 1.6 倍提升
 
-### 内存使用 (Memory Usage)
-- **Basic**: ~1MB
-- **Optimized**: ~2MB (with precomputed tables)
-- **SIMD**: ~4MB (with extended tables)
+### 内存使用
+- **基础实现**：约 1MB
+- **优化实现**：约 2MB（使用预计算表）
+- **SIMD 实现**：约 4MB（使用扩展表）
 
-### 结论 (Conclusions)
+### 结论
 
-本项目成功实现了SM2椭圆曲线数字签名算法的多级优化，通过雅可比坐标系、预计算表、窗口方法等技术，实现了2.5-2.6倍的性能提升，同时保持了密码学安全性。
-
-The project successfully implemented multi-level optimizations for SM2 elliptic curve digital signature algorithm, achieving 2.5-2.6x performance improvements through Jacobian coordinates, precomputed tables, and windowing methods while maintaining cryptographic security.
+本项目成功实现了 SM2 椭圆曲线数字签名算法的多级优化，通过雅可比坐标系、预计算表、窗口方法等技术，实现了 2.5-2.6 倍的性能提升，同时保持了密码学安全性。
