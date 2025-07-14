@@ -9,7 +9,6 @@
 
 import hashlib
 import secrets
-from typing import bytes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 
