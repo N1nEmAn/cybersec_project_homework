@@ -27,15 +27,12 @@ OBJECTS = $(ALL_SOURCES:.c=.o)
 # Targets
 TARGETS = bin/test_sm3 bin/benchmark bin/sm3_demo
 
-# Library
-LIBRARY = bin/libmerkle.a
-
 # Create directories
 $(shell mkdir -p bin obj)
 
 .PHONY: all clean test benchmark charts install
 
-all: $(TARGETS) $(LIBRARY)
+all: $(TARGETS)
 
 # Main targets
 bin/test_sm3: tests/test_sm3.c $(OBJECTS)
@@ -50,19 +47,6 @@ bin/sm3_demo: demo/demo.c $(OBJECTS)
 # Object files
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
-
-# Static library
-$(LIBRARY): $(OBJECTS)
-	ar rcs $@ $^
-
-# 添加merkle_tree.c到编译规则
-MERKLE_SOURCES = src/merkle_tree.c
-MERKLE_OBJECTS = obj/merkle_tree.o
-
-$(MERKLE_OBJECTS): $(MERKLE_SOURCES)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-LIBRARY: $(MERKLE_OBJECTS)
 
 # Run tests
 test: bin/test_sm3
@@ -99,7 +83,6 @@ clean:
 	rm -f $(TARGETS)
 	rm -f src/*.o tests/*.o benchmarks/*.o demo/*.o
 	rm -f gmon.out
-	rm -f $(LIBRARY)
 
 # Show build configuration
 info:

@@ -15,15 +15,6 @@
  */
 
 #include "sm3.h"
-
-// 修复类型定义
-#define sm3_context_t sm3_ctx_t
-
-// 修复函数声明
-#define sm3_init(ctx) sm3_init(ctx)
-#define sm3_update(ctx, data, len) sm3_update(ctx, data, len)
-#define sm3_final(ctx, digest) sm3_final(ctx, digest)
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -209,11 +200,84 @@ void* hash_level_worker(void* arg) {
 /**
  * Build the Merkle tree from added leaves using parallel computation
  */
-void merkle_tree_build(merkle_tree_t *tree, uint8_t leaves[][32], int num_leaves) {
-    // 示例实现：计算根哈希
-    for (int i = 0; i < 32; i++) {
-        tree->root_hash[i] = 0; // 简单初始化
+int merkle_tree_build(merkle_tree_t* tree) {
+    if (tree->leaf_count == 0) {
+        return -1;
     }
+    
+    // Create leaf nodes
+    merkle_node_t** current_level = malloc(tree->leaf_count * sizeof(merkle_node_t*));
+    if (!current_level) return -1;
+    
+    for (size_t i = 0; i < tree->leaf_count; i++) {
+        current_level[i] = merkle_node_create(tree->leaf_hashes[i]);
+        if (!current_level[i]) {
+            // Cleanup on failure
+            for (size_t j = 0; j < i; j++) {
+                free(current_level[j]);
+            }
+            free(current_level);
+            return -1;
+        }
+    }
+    
+    size_t current_count = tree->leaf_count;
+    int num_threads = 4; // Use 4 threads for parallel processing
+    
+    // Build tree level by level
+    while (current_count > 1) {
+        size_t next_count = (current_count + 1) / 2;
+        merkle_node_t** next_level = malloc(next_count * sizeof(merkle_node_t*));
+        if (!next_level) {
+            free(current_level);
+            return -1;
+        }
+        
+        memset(next_level, 0, next_count * sizeof(merkle_node_t*));
+        
+        // Determine work distribution for threads
+        size_t work_per_thread = (current_count + num_threads - 1) / num_threads;
+        work_per_thread = (work_per_thread + 1) & ~1; // Make even for pairing
+        
+        pthread_t threads[num_threads];
+        thread_data_t thread_data[num_threads];
+        
+        // Launch threads
+        for (int t = 0; t < num_threads; t++) {
+            thread_data[t].nodes = current_level;
+            thread_data[t].start_index = t * work_per_thread;
+            thread_data[t].end_index = (t + 1) * work_per_thread;
+            if (thread_data[t].end_index > current_count) {
+                thread_data[t].end_index = current_count;
+            }
+            
+            if (thread_data[t].start_index < current_count) {
+                pthread_create(&threads[t], NULL, hash_level_worker, &thread_data[t]);
+            }
+        }
+        
+        // Wait for threads to complete
+        for (int t = 0; t < num_threads; t++) {
+            if (thread_data[t].start_index < current_count) {
+                pthread_join(threads[t], NULL);
+            }
+        }
+        
+        // Copy results to next level
+        for (size_t i = 0; i < next_count; i++) {
+            next_level[i] = current_level[i];
+        }
+        
+        free(current_level);
+        current_level = next_level;
+        current_count = next_count;
+    }
+    
+    tree->root = current_level[0];
+    tree->tree_size = tree->leaf_count;
+    
+    free(current_level);
+    return 0;
 }
 
 /**

@@ -134,17 +134,16 @@ void sm4_encrypt_optimized(const sm4_ctx_t *ctx, const uint8_t input[SM4_BLOCK_S
     for (i = 0; i < SM4_ROUNDS; i++) {
         temp = x[1] ^ x[2] ^ x[3] ^ ctx->rk[i];
         temp = sm4_t_optimized(temp);
-        x[0] ^= temp;
+        temp ^= x[0];
         
         /* Rotate the words */
-        temp = x[0];
         x[0] = x[1];
         x[1] = x[2];
         x[2] = x[3];
         x[3] = temp;
     }
     
-    /* Reverse final transformation */
+    /* Final transformation: (X35, X34, X33, X32) */
     temp = x[0]; x[0] = x[3]; x[3] = temp;
     temp = x[1]; x[1] = x[2]; x[2] = temp;
     
