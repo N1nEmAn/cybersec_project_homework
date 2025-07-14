@@ -1,47 +1,51 @@
-# SM2 Algorithm Analysis and Complexity Study
+# SM2 算法分析与复杂度研究
 
-## Performance Comparison Results
+## 性能比较结果
 
-Based on our comprehensive benchmarking, here are the key findings:
+根据我们的综合基准测试，得出以下主要发现：
 
-### Implementation Performance (Average times in milliseconds)
+### 实现性能（平均时间：毫秒）
 
-| Operation      | Basic    | Optimized | SIMD     | Opt Speedup | SIMD Speedup |
-|----------------|----------|-----------|----------|-------------|--------------|
-| Key Generation | 45.2ms   | 25.3ms    | 17.8ms   | 1.79x       | 2.54x        |
-| Signing        | 38.5ms   | 21.2ms    | 15.1ms   | 1.82x       | 2.55x        |
-| Verification   | 42.1ms   | 23.5ms    | 16.3ms   | 1.79x       | 2.58x        |
+| 操作 | 基础实现 | 优化实现 | SIMD 实现 | 优化加速比 | SIMD 加速比 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **密钥生成** | 45.2ms | 25.3ms | 17.8ms | 1.79x | 2.54x |
+| **签名** | 38.5ms | 21.2ms | 15.1ms | 1.82x | 2.55x |
+| **验签** | 42.1ms | 23.5ms | 16.3ms | 1.79x | 2.58x |
 
-### Optimization Effectiveness
+### 优化效果
 
-1. **Jacobian Coordinates**: ~1.8x improvement over affine coordinates
-2. **Precomputed Tables**: Additional ~1.4x improvement for base point operations
-3. **Windowing Method**: ~1.2x improvement in scalar multiplication
-4. **Batch Operations**: Up to 1.6x improvement for multiple verifications
+1.  **雅可比坐标 (Jacobian Coordinates)**：相比仿射坐标 (affine coordinates) 有约 **1.8 倍**的性能提升。
+2.  **预计算表 (Precomputed Tables)**：对基点运算带来额外约 **1.4 倍**的性能提升。
+3.  **窗口方法 (Windowing Method)**：在标量乘法上带来约 **1.2 倍**的性能提升。
+4.  **批量操作 (Batch Operations)**：在批量验签时最高可达 **1.6 倍**的性能提升。
 
-### Memory Usage Analysis
+### 内存使用分析
 
-- Basic Implementation: ~1MB RAM usage
-- Optimized Implementation: ~2MB RAM usage (precomputed tables)
-- SIMD Implementation: ~4MB RAM usage (extended tables)
+* **基础实现**：约 1MB 内存使用。
+* **优化实现**：约 2MB 内存使用（用于预计算表）。
+* **SIMD 实现**：约 4MB 内存使用（用于扩展表）。
 
-## Theoretical vs Practical Results
+***
 
-The measured performance improvements align well with theoretical expectations:
+## 理论与实践结果对比
 
-- **Expected**: Elimination of modular inverse operations should provide 6-8x improvement
-- **Measured**: 1.8x improvement (other overheads limit gains)
-- **Conclusion**: Optimization is effective but limited by implementation factors
+测得的性能提升与理论预期基本相符：
 
-## Security Analysis
+* **理论预期**：消除模逆元运算应带来 6-8 倍的性能提升。
+* **实际测量**：实现了 1.8 倍的提升（其他开销限制了增益）。
+* **结论**：优化是有效的，但受限于具体实现中的其他因素。
 
-All implementations maintain the same cryptographic security level:
-- 256-bit elliptic curve provides ~128-bit security strength
-- Resistant to known elliptic curve attacks (Pollard's rho, etc.)
-- Side-channel attack mitigation implemented in optimized versions
+***
 
-## Conclusion
+## 安全性分析
 
-The SM2 optimization project successfully demonstrates practical cryptographic 
-engineering principles with measurable performance improvements while maintaining 
-security guarantees.
+所有实现均保持相同的密码学安全等级：
+* 256 位的椭圆曲线提供约 **128 位的安全强度**。
+* 可抵抗已知的椭圆曲线攻击（如 Pollard's rho 算法等）。
+* 优化版本中实现了**侧信道攻击 (Side-channel attack) 的缓解措施**。
+
+***
+
+## 结论
+
+SM2 优化项目成功地展示了实用的密码学工程原理，在保持安全保障的同时，取得了可观的性能提升。
