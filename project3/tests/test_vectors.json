@@ -1,6 +1,6 @@
 {
   "description": "Poseidon2 测试向量集合",
-  "generated_at": "2024-07-13",
+  "generated_at": "test_generation_date",
   "test_vectors": [
     {
       "name": "基本测试向量 1",

@@ -195,7 +195,7 @@ def real_world_example():
     cert_info = {
         "subject": "CN=张三,O=某公司,C=CN",
         "public_key": user_public_key,
-        "validity": "2024-2025"
+        "validity": "valid_period"
     }
     
     # 证书内容序列化（简化）
@@ -220,7 +220,7 @@ def real_world_example():
     
     合同内容：...
     
-    签署日期：2024年7月13日
+    签署日期：项目完成日期
     """.encode('utf-8')
     
     # 文档哈希签名

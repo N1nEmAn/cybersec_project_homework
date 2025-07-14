@@ -1,19 +1,19 @@
 # 数字水印系统测试报告
 
 ## 测试概况
-- 测试时间: 2025-07-14 23:35:23
+- 测试时间: 项目测试期间
 - 算法: LSB (最低有效位)
 - 宿主图像: 512×512 灰度图像
 - 水印图像: 64×64 二值图像
 
 ## 性能指标
-- 嵌入时间: 0.0022秒
-- 提取时间: 0.0024秒
+- 嵌入时间: 0.0017秒
+- 提取时间: 0.0013秒
 - 含水印图像PSNR: 68.61dB
 - 提取水印PSNR: infdB
 
 ## 攻击测试结果
-- gaussian_noise: 攻击PSNR=34.15dB, 提取PSNR=2.98dB\n- scaling: 攻击PSNR=31.84dB, 提取PSNR=4.01dB\n- rotation: 攻击PSNR=12.64dB, 提取PSNR=3.55dB\n- compression: 攻击PSNR=33.36dB, 提取PSNR=4.10dB\n
+- gaussian_noise: 攻击PSNR=34.15dB, 提取PSNR=3.03dB\n- scaling: 攻击PSNR=31.84dB, 提取PSNR=4.01dB\n- rotation: 攻击PSNR=12.64dB, 提取PSNR=3.55dB\n- compression: 攻击PSNR=33.36dB, 提取PSNR=4.10dB\n
 ## 生成文件列表
 - original_host.png: 原始宿主图像
 - original_watermark.png: 原始水印图像  

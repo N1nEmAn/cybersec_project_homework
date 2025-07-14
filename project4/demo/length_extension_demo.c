@@ -71,7 +71,7 @@ void demo_banking_scenario(void) {
     printf("for transaction authentication.\n\n");
     
     // Bank's secret key (unknown to attacker)
-    const char* bank_secret = "BANK_SECRET_KEY_2023_ULTRA_SECURE";
+    const char* bank_secret = "BANK_SECRET_KEY_ULTRA_SECURE";
     
     // Original legitimate transaction
     const char* legit_transaction = "TRANSFER:100.00:USD:FROM:12345:TO:67890";
@@ -159,7 +159,7 @@ void demo_file_integrity_scenario(void) {
     
     printf("Scenario: System uses SM3(secret || file_content) to verify file integrity.\n\n");
     
-    const char* system_secret = "FILE_INTEGRITY_SECRET_2023";
+    const char* system_secret = "FILE_INTEGRITY_SECRET";
     const char* original_file = "SYSTEM_CONFIG_VERSION_1.0\nSECURITY_LEVEL=HIGH\nADMIN_ACCESS=RESTRICTED\n";
     
     // System computes integrity hash

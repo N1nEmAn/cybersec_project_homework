@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-13T08:42:39.318Z",
+  "timestamp": "test_execution_time",
   "requirements": {
     "req1": {
       "name": "参数配置 (256,2,5) 和 (256,3,5)",
