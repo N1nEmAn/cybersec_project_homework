@@ -42,11 +42,11 @@ chmod +x quick_verify_all.sh
 - GCM模式: ~87MB/s吞吐量
 
 **技术实现**:
-- ✅ 基础SM4算法
-- ✅ T-table查表优化
-- ✅ SIMD/AVX2优化
-- ✅ SM4-GCM认证模式
-- ✅ 性能测试与分析
+- ✅ 基础SM4算法 → [数学分析](./project1/docs/SM4_Mathematical_Analysis.md)
+- ✅ T-table查表优化 → [优化理论](./project1/docs/T_Table_Optimization_Theory.md)
+- ✅ SIMD/AVX2优化 → [并行分析](./project1/docs/SIMD_Parallel_Analysis.md)
+- ✅ SM4-GCM认证模式 → [数学基础](./project1/docs/GCM_Mathematical_Foundation.md)
+- ✅ 性能测试与分析 → [指令集映射](./project1/docs/Instruction_Set_Mathematical_Mapping.md)
 
 **快速验证**:
 ```bash
@@ -66,10 +66,10 @@ make && ./bin/test_sm4
 - 图像质量评估
 
 **技术实现**:
-- ✅ LSB水印算法
-- ✅ DCT域水印算法
-- ✅ 鲁棒性测试(旋转、缩放、压缩、噪声)
-- ✅ 图像质量评估(PSNR、SSIM)
+- ✅ LSB水印算法 → [数学原理](./project2/docs/mathematical_principles.md)
+- ✅ DCT域水印算法 → [算法优化](./project2/docs/algorithm_optimization.md)
+- ✅ 鲁棒性测试(旋转、缩放、压缩、噪声) → [性能分析](./project2/docs/performance_analysis.md)
+- ✅ 图像质量评估(PSNR、SSIM) → [性能报告](./project2/docs/performance_report.md)
 - ✅ 完整演示系统
 
 **快速验证**:
@@ -90,9 +90,9 @@ python demo_complete.py
 - 证明验证系统
 
 **技术实现**:
-- ✅ Poseidon2电路实现(n,t,d)=(256,3,5)
-- ✅ Groth16证明系统
-- ✅ 完整的trusted setup
+- ✅ Poseidon2电路实现(n,t,d)=(256,3,5) → [算法详解](./project3/docs/algorithm.md)
+- ✅ Groth16证明系统 → [优化报告](./project3/docs/optimization.md)
+- ✅ 完整的trusted setup → [性能报告](./project3/docs/performance_report.md)
 - ✅ 证明生成与验证
 - ✅ Node.js工具链
 
@@ -113,10 +113,10 @@ node scripts/demo.js
 - 性能分析
 
 **技术实现**:
-- ✅ SM3基础实现
-- ✅ SM3优化实现
-- ✅ 长度扩展攻击演示
-- ✅ Merkle树实现(100k节点)
+- ✅ SM3基础实现 → [架构对比分析](./project4/docs/architecture_comparison.png)
+- ✅ SM3优化实现 → [算法分析图](./project4/docs/algorithm_analysis.png)
+- ✅ 长度扩展攻击演示 → [性能对比图](./project4/docs/performance_comparison.png)
+- ✅ Merkle树实现(100k节点) → [扩展性分析](./project4/docs/scalability_analysis.png)
 - ✅ 性能测试与分析
 
 **快速验证**:
@@ -136,11 +136,11 @@ python demo.py
 - 安全性评估
 
 **技术实现**:
-- ✅ SM2基础实现
-- ✅ SM2优化实现
-- ✅ 随机数重用攻击
-- ✅ 弱随机数攻击
-- ✅ 签名误用POC
+- ✅ SM2基础实现 → [数学推导](./project5/docs/mathematical_derivation.md)
+- ✅ SM2优化实现 → [详细数学推导](./project5/docs/mathematical_derivation_detailed.md)
+- ✅ 随机数重用攻击 → [算法分析](./project5/docs/algorithm_analysis.md)
+- ✅ 弱随机数攻击 → [优化报告](./project5/docs/optimization_report.md)
+- ✅ 签名误用POC → [性能总结](./project5/docs/performance_summary.md)
 - ✅ 中本聪签名分析
 
 **快速验证**:
@@ -159,67 +159,16 @@ python demo_complete.py
 - 可扩展架构
 
 **技术实现**:
-- ✅ PSI协议核心实现
-- ✅ 同态加密机制
-- ✅ 差分隐私保护
-- ✅ 多场景应用演示
-- ✅ 可扩展性测试
+- ✅ PSI协议核心实现 → [协议规范](./project6/docs/protocol_specification.md)
+- ✅ 同态加密机制 → [安全分析](./project6/docs/security_analysis.md)
+- ✅ 差分隐私保护 → [实现说明](./project6/docs/implementation_notes.md)
+- ✅ 多场景应用演示 → [使用指南](./project6/docs/usage_guide.md)
+- ✅ 可扩展性测试 → [项目总结](./project6/docs/project_summary.md)
 
 **快速验证**:
 ```bash
 cd project6
 python demo_simple.py
-```
-
-**核心功能**:
-- 基础优化(查表、代数简化)
-- SIMD并行压缩
-- 多线程并行处理
-- 长度扩展攻击演示
-- RFC6962 Merkle树(支持10万叶子节点)
-- 架构特定优化(x86_64/ARM64)
-
-**快速验证**:
-```bash
-cd project4
-make && ./bin/test_sm3
-# 或运行攻击演示
-./demo/length_extension_demo
-```
-
-### Project 5: SM2椭圆曲线密码实现与攻击分析
-实现SM2椭圆曲线数字签名算法，包含多种攻击分析和安全研究，涵盖随机数攻击、侧信道攻击、Bitcoin签名分析等。
-
-**安全分析**:
-- 随机数重用攻击
-- 弱随机数模式攻击
-- 侧信道攻击(时间、功耗、缓存)
-- Bitcoin签名延展性分析
-- 中本聪签名模拟分析
-
-**快速验证**:
-```bash
-cd project5
-python demo_complete.py
-# 或运行安全分析套件
-python src/comprehensive_security_demo.py
-```
-
-### Project 6: Google Password Checkup协议实现
-实现Google Password Checkup隐私保护协议，基于私有集合求交(PSI)技术，支持用户密码泄露检测而不泄露密码信息。
-
-**协议特点**:
-- 私有集合求交(PSI)
-- 不经意伪随机函数(OPRF)
-- 隐私保护查询
-- 可配置安全参数
-
-**快速验证**:
-```bash
-cd project6
-python demo_simple.py
-# 或运行完整协议演示
-python demo_complete.py
 ```
 
 ## 🛠️ 环境要求
